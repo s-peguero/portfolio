@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>To-Do & Reminders Page</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background-color: #EFF1F3;
+        }
+
+        /* {
+            font-family: Georgia, serif;
+            color: #223843;
+            box-sizing: border-box;
+        }*/
+
+        .device {
+            max-width: 640px;
+            min-height: 960px;
+            background-color: #EFF1F3;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-title h3 {
+            margin: 20px 0 10px 0;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        .section-divider { 
+            height: 1px; 
+            background: linear-gradient(to right, transparent, #223843, transparent);
+            width: 100%;
+            margin: 25px 0;
+        }
+
+        .todo-section h3, 
+        .reminders-section h3 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+
+        .reminder-box {
+            background: #fff;
+            border-radius: 8px;
+            padding: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .reminder-item {
+            padding: 15px 15px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .reminder-item:last-child {
+            border-bottom: none;
+        }
+
+        .reminder-title {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .reminder-date {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .add-reminder {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .add-reminder input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        .add-reminder input::placeholder {
+            color: #888;
+            font-style: italic;
+        }
+
+        .add-reminder button {
+            background-color: #223843;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .add-reminder button:hover {
+            background-color: #2f4e5a;
+        }
+
+        .todo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .todo-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .todo-list li:last-child {
+            border-bottom: none;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .todo-checkbox {
+            margin-right: 10px;
+        }
+
+        .todo-text {
+            font-size: 16px;
+        }
+
+        .add-todo {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .add-todo input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px 0 0 6px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        .add-todo input::placeholder {
+            color: #888;
+            font-style: italic;
+        }
+
+        .add-todo button {
+            background-color: #223843;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .add-todo button:hover {
+            background-color: #2f4e5a;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="device">
+
+        <div class="section-title">
+            <h3>Reminders & To-Do List</h3>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="reminders-section">
+            <h3>Reminders</h3>
+            <div class="reminder-box">
+                <div class="reminder-item">
+                    <div class="reminder-title">Rent due</div>
+                    <div class="reminder-date">Oct 30, 2025</div>
+                </div>
+                <div class="reminder-item">
+                    <div class="reminder-title">Credit card payment</div>
+                    <div class="reminder-date">Oct 25, 2025</div>
+                </div>
+                <div class="reminder-item">
+                    <div class="reminder-title">Car insurance renewal</div>
+                    <div class="reminder-date">Nov 1, 2025</div>
+                </div>
+            </div>
+
+            <div class="add-reminder">
+                <input type="text" placeholder="Reminder title">
+                <input type="date">
+                <button>Add Reminder</button>
+            </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="todo-section">
+            <h3>To-Do List</h3>
+            <ul class="todo-list">
+                <li>
+                    <div class="todo-item">
+                        <input type="checkbox" class="todo-checkbox">
+                        <span class="todo-text">Update monthly budget</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="todo-item">
+                        <input type="checkbox" class="todo-checkbox">
+                        <span class="todo-text">Pay utilities bill</span>
+                    </div>
+                </li>
+                <li>
+                    <div class="todo-item">
+                        <input type="checkbox" class="todo-checkbox">
+                        <span class="todo-text">Review credit card spending</span>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="add-todo">
+                <input type="text" placeholder="Add a new task...">
+                <button>Add</button>
+            </div>
+        </div>
+
+    </div>
+    <nav class="navbar">
+    <a href="reminders.html" class="active">
+      <span class="material-icons">home</span>
+      <span>Home</span>
+    </a>
+    <a href="transaction.html">
+      <span class="material-icons">payments</span>
+      <span>Transactions</span>
+    </a>
+    <a href="goals.html">
+      <span class="material-icons">leaderboard</span>
+      <span>Goals</span>
+    </a>
+  </nav>
+</body>
+</html>

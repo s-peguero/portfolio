@@ -1,0 +1,270 @@
+/* GENERAL PAGE STRUCTURE */
+
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: #F8F9FF;
+}
+
+.device {
+    max-width: 640px;
+    height: 960px;
+    background: white;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #D9D9ED;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(108, 99, 255, 0.08);
+}
+
+.device-content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+/* HEADER */
+
+.page-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+}
+
+.subtitle {
+    font-size: 13px;
+    color: #777;
+    margin-top: 3px;
+}
+
+/* CARDS */
+
+.card {
+    background: #ffffff;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid #E3E3F5;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 5px rgba(108, 99, 255, 0.05);
+}
+
+.card-title {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    color: #444;
+    font-weight: 600;
+}
+
+/* FORM GRID - 3 columns more balanced */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.full-width {
+    grid-column: 1 / 4;
+}
+
+.form-group label {
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+/* Inputs */
+
+input,
+select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #CFCFF7;
+    font-size: 14px;
+    background: #FBFAFF;
+}
+
+/* SORT CONTROLS */
+
+.sort-controls {
+    padding: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.sort-controls select {
+    padding: 7px 10px;
+    font-size: 13px;
+    width: 160px;
+}
+
+/* BUTTONS */
+
+.btn {
+    padding: 7px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+}
+
+.small-btn {
+    padding: 5px 8px;
+    font-size: 12px;
+}
+
+.primary {
+    background: #3D4AA8;
+    color: white;
+}
+
+.secondary {
+    background: #EAE8FF;
+    color: #333;
+}
+
+/* CATEGORY HEADERS */
+
+.category-header {
+    font-weight: 600;
+    font-size: 14px;
+    color: #555;
+    margin: 12px 0 6px 2px;
+}
+
+/* TRANSACTION LIST */
+
+.transaction-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.transaction-list li {
+    background: #F4F3FF;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border: 1px solid #E0DFFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.transaction-buttons {
+    display: flex;
+    gap: 6px;
+}
+
+/* HISTORY + CHART LAYOUT */
+
+.transaction-chart-row {
+    display: flex;
+    gap: 12px;
+}
+
+/* 2:1 ratio */
+
+.transaction-history-wrapper {
+    flex: 2;
+}
+
+.chart-section {
+    flex: 1;
+    text-align: center;
+    
+}
+
+.chart-section h4 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    color: #444;
+    font-weight: 600;
+}
+
+#spending-chart {
+    width: 170px !important;
+    height: 170px !important;
+    align-items: center;
+
+}
+
+/* NAVBAR */
+
+.navbar {
+    background: #3D4AA8;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-top: 1px solid #2C3A8C;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    text-align: center;
+}
+
+.navbar a.active {
+    font-weight: bold;
+}
+
+.navbar .material-icons {
+    font-size: 22px;
+    display: block;
+    margin-bottom: 2px;
+}
+.page-header {
+    position: relative;
+}
+
+.top-right-icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translateY(6px); /* adjusts vertical centering */
+}
+
+.top-right-icon .material-icons {
+    font-size: 50px;
+    color: black;
+    cursor: pointer;
+}
+
+.category-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.category-inline {
+    display: flex;
+    gap: 8px;
+
+}
+
+.category-inline select {
+    flex: 0.9; /* takes available space */
+}
+
+.add-category-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+    background-color: #DEE4FF;
+    border: 1px solid #3D4AA8;
+    color: #3D4AA8;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.add-category-btn:hover {
+    background-color: #cdd6ff;
+}

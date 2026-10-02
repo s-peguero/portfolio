@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Goals/Spending Reports Page</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Georgia, serif;
+            background-color: #EFF1F3;
+        }
+
+        .device {
+            max-width: 640px;
+            min-height: 960px;
+            background-color: #EFF1F3;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* section title */
+        .section-title h3{
+            margin: 20x 0 10px 0;
+            font-size: 30px;
+            color: #223843;
+            text-align: center;
+        }
+
+         /* current amount spent title */
+         .current-amount-section h3 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+            color: #223843;
+        }
+
+        /* amount box */
+        .amount-box {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+
+        .amount {
+            font-size: 20px;
+            color: #223843;
+        }
+
+        /* section divider */
+        .section-divider { 
+            height: 1px; 
+            background: linear-gradient(to right, transparent, #223843, transparent);
+            width: 100%;
+            margin: 25px 0;
+        }
+
+        /* spending section */
+        .spending-section h3 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+            color: #223843;
+        }
+
+        .category-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .category-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .category-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* goals section */
+        .goals-section h3 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+            color: #223843;
+        }
+
+        .goal-box {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            background-color: #EFF1F3;
+            border: 1px solid #223843;
+            border-radius: 6px;
+            height: 25px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            background-color: #223843;
+            height: 100%;
+            width: 80%; 
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(255,255,255,0.2) 0,
+                rgba(255,255,255,0.2) 10px,
+                transparent 10px,
+                transparent 20px
+            );
+        }
+
+        .goal-info {
+            font-size: 15px;
+            color: #223843;
+            line-height: 1.3;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="device">
+
+        <!-- section title -->
+        <div class="section-title">
+            <h3>Goals/Spending Reports Page</h3>
+        </div>
+
+        <!-- section divider -->
+        <div class="section-divider"></div>
+
+        <!-- current amount section -->
+        <div class="current-amount-section">
+            <h3>Current Amount Spent</h3>
+            <div class="amount-box">
+                <div class="amount">$3,289.67</div>
+            </div>
+        </div>
+
+        <!-- section divider -->
+        <div class="section-divider"></div>
+
+        <!-- spending by category section -->
+        <div class="spending-section">
+            <h3>Spending by Category</h3>
+            <ul class="category-list">
+                <li><span>Entertainment</span><span>$89.67</span></li>
+                <li><span>Dining/Restaurants</span><span>$200.00</span></li>
+                <li><span>Utilities</span><span>$1,000.00</span></li>
+                <li><span>Home</span><span>$2,000.00</span></li>
+            </ul>
+        </div>
+
+        <!-- section divider -->
+        <div class="section-divider"></div>
+
+        <!-- goals section -->
+        <div class="goals-section">
+            <h3>Goals</h3>
+            <div class="goal-box">
+                <div class="goal-header">
+                    <div class="goal-name">Vacation</div>
+                    <div class="goal-target">$1,000 goal</div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+
+                <div class="goal-info">
+                    $800 saved<br>
+                    $200 away from your goal — Good job!
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar">
+    <a href="reminders.html">
+      <span class="material-icons">home</span>
+      <span>Home</span>
+    </a>
+    <a href="transaction.html">
+      <span class="material-icons">payments</span>
+      <span>Transactions</span>
+    </a>
+    <a href="goals.html" class="active">
+      <span class="material-icons">leaderboard</span>
+      <span>Goals</span>
+    </a>
+    
+  </nav>
+</body>
+</html>

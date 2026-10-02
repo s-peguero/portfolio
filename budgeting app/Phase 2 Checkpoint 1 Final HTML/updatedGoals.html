@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Savings & Spending</title>
+  <style>
+    :root {
+      --bg: #fff;
+      --panel: #E8E8FF;
+      --text: #223843;
+      --primary: #1A56FF;
+      --danger: #E33A3A;
+      --muted: rgba(0, 0, 0, 0.55);
+      --w: 640px;
+      --r: 10px;
+      --pad: 18px;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0
+    }
+
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 28px
+    }
+
+    .app {
+      width: 100%;
+      max-width: var(--w)
+    }
+
+    h1 {
+      font-size: 34px;
+      margin: 0 0 12px;
+      text-align: center
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--panel), transparent);
+      margin: 16px 0
+    }
+
+    .scene {
+      perspective: 900px;
+      position: relative
+    }
+
+    .card {
+      width: 100%;
+      height: 740px;
+      border-radius: var(--r);
+      transform-style: preserve-3d;
+      transition: transform .45s;
+      position: relative
+    }
+
+    .card.is-flipped {
+      transform: rotateY(180deg)
+    }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      padding: var(--pad);
+      background: var(--panel);
+      border-radius: var(--r);
+      overflow: auto;
+      backface-visibility: hidden
+    }
+
+    .face.back {
+      transform: rotateY(180deg)
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px
+    }
+
+    .input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #fff
+    }
+
+    .small {
+      width: 110px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #fff
+    }
+
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: 0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700
+    }
+
+    .list {
+      margin-top: 12px;
+      padding: 0;
+      list-style: none;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      overflow: hidden
+    }
+
+    .list li {
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06)
+    }
+
+    .list li:last-child {
+      border-bottom: 0
+    }
+
+    .list .row-inline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%
+    }
+
+    .name {
+      font-weight: 700
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .del {
+      background: transparent;
+      border: 0;
+      font-size: 18px;
+      color: var(--muted);
+      cursor: pointer
+    }
+
+    .footer {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 18px;
+      display: flex;
+      justify-content: center;
+      pointer-events: none
+    }
+
+    .footer .btn {
+      pointer-events: auto;
+      width: 100%;
+      max-width: 360px
+    }
+
+    /* progress bar styles */
+    .progress-bar {
+      width: 100%;
+      background-color: #EFF1F3;
+      border: 1px solid #223843;
+      border-radius: 6px;
+      height: 25px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      background-color: #223843;
+      height: 100%;
+      width: 0%;
+      background-image: repeating-linear-gradient(45deg,
+          rgba(255, 255, 255, 0.2) 0,
+          rgba(255, 255, 255, 0.2) 10px,
+          transparent 10px,
+          transparent 20px);
+      transition: width 280ms ease, background-color 180ms ease;
+    }
+
+    .progress-fill.over {
+      background-color: var(--danger);
+    }
+
+    @media(max-width:640px) {
+      .card {
+        height: 720px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <h1>Savings & Spending</h1>
+    <div class="divider"></div>
+
+    <div class="scene">
+      <div id="card" class="card" aria-hidden="false">
+        <!-- savings tab -->
+        <section class="face front" aria-hidden="false">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:700;font-size:18px">Savings</div>
+            <div style="background:#fff;padding:8px 12px;border-radius:8px;font-weight:700">$0.00</div>
+          </div>
+
+          <div style="margin-top:16px">
+            <div style="font-weight:700;margin-bottom:8px">Categories</div>
+            <ul id="savingsList" class="list" aria-live="polite"></ul>
+
+            <div class="row">
+              <input id="savingsInput" class="input" placeholder="Add savings category" />
+              <button id="savingsAdd" class="btn">Add</button>
+            </div>
+          </div>
+
+          <!-- savings goals -->
+          <div
+            style="margin-top:20px;background:#fff;padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.04)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:700">Goals</div>
+              <div class="meta">Track progress per goal</div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <input id="goalName" class="input" placeholder="Goal name (e.g., Vacation)" />
+              <input id="goalTarget" class="small" placeholder="Target $" />
+              <button id="goalAdd" class="btn">Add</button>
+            </div>
+
+            <ul id="goalsList" class="list" aria-live="polite" style="margin-top:12px"></ul>
+          </div>
+        </section>
+
+        <!-- spending tab -->
+        <section class="face back" aria-hidden="true">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:700;font-size:18px">Spending</div>
+            <div style="background:#fff;padding:8px 12px;border-radius:8px;font-weight:700">$0.00</div>
+          </div>
+
+          <div style="margin-top:16px">
+            <div style="font-weight:700">Categories</div>
+            <ul id="spendingList" class="list" aria-live="polite"></ul>
+
+            <div class="row">
+              <input id="spendingInput" class="input" placeholder="Add spending category" />
+              <button id="spendingAdd" class="btn">Add</button>
+            </div>
+          </div>
+
+          <!-- spending goals (budget) -->
+          <div
+            style="margin-top:20px;background:#fff;padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.04)">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:700">Budgets</div>
+              <div class="meta">Record spending per budget</div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <input id="budgetName" class="input" placeholder="Budget name (e.g., Food)" />
+              <input id="budgetLimit" class="small" placeholder="Limit $" />
+              <button id="budgetAdd" class="btn">Add</button>
+            </div>
+
+            <ul id="budgetsList" class="list" aria-live="polite" style="margin-top:12px"></ul>
+          </div>
+        </section>
+      </div>
+
+      <div class="footer">
+        <button id="flipBtn" class="btn" aria-pressed="false">View Spending →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const card = document.getElementById('card');
+      const flipBtn = document.getElementById('flipBtn');
+
+      // Category elements
+      const sInput = document.getElementById('savingsInput');
+      const sAdd = document.getElementById('savingsAdd');
+      const sList = document.getElementById('savingsList');
+
+      const pInput = document.getElementById('spendingInput');
+      const pAdd = document.getElementById('spendingAdd');
+      const pList = document.getElementById('spendingList');
+
+      // saving goals elements
+      const goalName = document.getElementById('goalName');
+      const goalTarget = document.getElementById('goalTarget');
+      const goalAdd = document.getElementById('goalAdd');
+      const goalsList = document.getElementById('goalsList');
+
+      // spending goals (budget) elements
+      const budgetName = document.getElementById('budgetName');
+      const budgetLimit = document.getElementById('budgetLimit');
+      const budgetAdd = document.getElementById('budgetAdd');
+      const budgetsList = document.getElementById('budgetsList');
+
+      // data in memory 
+      let sCats = [];
+      let pCats = [];
+      let goals = [];
+      let budgets = [];
+
+      const uid = () => Math.random().toString(36).slice(2, 9);
+      const fmt = n => '$' + Number(n || 0).toFixed(2);
+
+      function escapeHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+      function renderCategories(listEl, arr) {
+        listEl.innerHTML = '';
+        if (!arr.length) {
+          const li = document.createElement('li');
+          li.innerHTML = '<div class="row-inline"><span class="meta" style="color:var(--muted)">No items</span></div>';
+          listEl.appendChild(li); return;
+        }
+        arr.forEach((name, i) => {
+          const li = document.createElement('li');
+          li.innerHTML = `<div class="row-inline"><span class="name">${escapeHtml(name)}</span><button class="del" title="Remove">✕</button></div>`;
+          li.querySelector('.del').addEventListener('click', () => { arr.splice(i, 1); renderAll(); });
+          listEl.appendChild(li);
+        });
+      }
+
+      // render goals
+      function renderGoals() {
+        goalsList.innerHTML = '';
+        if (!goals.length) { const li = document.createElement('li'); li.innerHTML = '<div class="row-inline"><span class="meta" style="color:var(--muted)">No goals yet</span></div>'; goalsList.appendChild(li); return; }
+        goals.forEach((g, idx) => {
+          const pct = (g.target && g.target > 0) ? Math.round((g.saved / g.target) * 100) : 0;
+          const pctClamped = Math.max(0, Math.min(100, pct));
+          const li = document.createElement('li');
+          li.innerHTML =
+            `
+        <div style="width:100%" class="row-inline">
+          <div style="flex:1">
+            <div class="name">${escapeHtml(g.name)}</div>
+            <div class="meta">${fmt(g.saved)} of ${fmt(g.target)} (${pct}%)</div>
+          </div>
+          <div style="margin-left:12px;flex-shrink:0">
+            <button class="del" title="Remove goal">✕</button>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="progress-bar" aria-hidden="true">
+            <div class="progress-fill" style="width:${pctClamped}%;"></div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <input class="input" placeholder="Add amount" style="flex:1;padding:8px" />
+            <button class="btn contribute">Contribute</button>
+          </div>
+        </div>
+      `;
+          li.querySelector('.del').addEventListener('click', () => { goals.splice(idx, 1); renderAll(); });
+          li.querySelector('.contribute').addEventListener('click', () => {
+            const input = li.querySelector('input');
+            const val = Number(input.value || 0);
+            if (!isFinite(val) || val <= 0) { input.value = ''; input.placeholder = 'Enter a number'; setTimeout(() => input.placeholder = 'Add amount', 1200); return; }
+            g.saved = (g.saved || 0) + val;
+            input.value = '';
+            renderAll();
+          });
+          li.querySelector('input').addEventListener('keydown', (e) => { if (e.key === 'Enter') li.querySelector('.contribute').click(); });
+          goalsList.appendChild(li);
+        });
+      }
+
+      // render budgets (mirror goals but for spending)
+      function renderBudgets() {
+        budgetsList.innerHTML = '';
+        if (!budgets.length) { const li = document.createElement('li'); li.innerHTML = '<div class="row-inline"><span class="meta" style="color:var(--muted)">No budgets yet</span></div>'; budgetsList.appendChild(li); return; }
+        budgets.forEach((b, idx) => {
+          const pct = (b.limit && b.limit > 0) ? Math.round((b.spent / b.limit) * 100) : 0;
+          const pctClamped = Math.max(0, Math.min(200, pct)); // allow showing >100 up to 200% width
+          const over = pct > 100;
+          const li = document.createElement('li');
+          li.innerHTML = `
+        <div style="width:100%" class="row-inline">
+          <div style="flex:1">
+            <div class="name">${escapeHtml(b.name)}</div>
+            <div class="meta">${fmt(b.spent)} of ${fmt(b.limit)} (${pct}%)</div>
+          </div>
+          <div style="margin-left:12px;flex-shrink:0">
+            <button class="del" title="Remove budget">✕</button>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="progress-bar" aria-hidden="true">
+            <div class="progress-fill ${over ? 'over' : ''}" style="width:${pctClamped}%;"></div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center">
+            <input class="input" placeholder="Record expense" style="flex:1;padding:8px" />
+            <button class="btn record">Record</button>
+          </div>
+        </div>
+      `;
+          li.querySelector('.del').addEventListener('click', () => { budgets.splice(idx, 1); renderAll(); });
+
+          li.querySelector('.record').addEventListener('click', () => {
+            const input = li.querySelector('input');
+            const val = Number(input.value || 0);
+            if (!isFinite(val) || val <= 0) { input.value = ''; input.placeholder = 'Enter a number'; setTimeout(() => input.placeholder = 'Record expense', 1200); return; }
+            b.spent = (b.spent || 0) + val;
+            input.value = '';
+            renderAll();
+          });
+          li.querySelector('input').addEventListener('keydown', (e) => { if (e.key === 'Enter') li.querySelector('.record').click(); });
+
+          budgetsList.appendChild(li);
+        });
+      }
+
+      function renderAll() {
+        renderCategories(sList, sCats);
+        renderCategories(pList, pCats);
+        renderGoals();
+        renderBudgets();
+      }
+
+      // add handlers
+      sAdd.addEventListener('click', () => { addCategory('s', sInput.value); });
+      pAdd.addEventListener('click', () => { addCategory('p', pInput.value); });
+
+      sInput.addEventListener('keydown', e => { if (e.key === 'Enter') addCategory('s', sInput.value); });
+      pInput.addEventListener('keydown', e => { if (e.key === 'Enter') addCategory('p', pInput.value); });
+
+      goalAdd.addEventListener('click', () => {
+        const name = String(goalName.value || '').trim(); const target = Number(goalTarget.value || 0);
+        if (!name || !isFinite(target) || target <= 0) { goalTarget.value = ''; goalName.focus(); return; }
+        goals.push({ id: uid(), name, target, saved: 0 });
+        goalName.value = ''; goalTarget.value = ''; renderAll();
+      });
+
+      budgetAdd.addEventListener('click', () => {
+        const name = String(budgetName.value || '').trim(); const limit = Number(budgetLimit.value || 0);
+        if (!name || !isFinite(limit) || limit <= 0) { budgetLimit.value = ''; budgetName.focus(); return; }
+        budgets.push({ id: uid(), name, limit, spent: 0 });
+        budgetName.value = ''; budgetLimit.value = ''; renderAll();
+      });
+
+      budgetName.addEventListener('keydown', e => { if (e.key === 'Enter') budgetLimit.focus(); });
+      budgetLimit.addEventListener('keydown', e => { if (e.key === 'Enter') budgetAdd.click(); });
+
+      goalName.addEventListener('keydown', e => { if (e.key === 'Enter') goalTarget.focus(); });
+      goalTarget.addEventListener('keydown', e => { if (e.key === 'Enter') goalAdd.click(); });
+
+      // flip only via button (can add upon keyboard input later)
+      flipBtn.addEventListener('click', () => {
+        const flipped = card.classList.toggle('is-flipped');
+        flipBtn.textContent = flipped ? '← Back to Savings' : 'View Spending →';
+        flipBtn.setAttribute('aria-pressed', String(!!flipped));
+        card.querySelector('.front').setAttribute('aria-hidden', String(!!flipped));
+        card.querySelector('.back').setAttribute('aria-hidden', String(!flipped));
+      });
+
+      // initial render
+      renderAll();
+      card.classList.remove('is-flipped');
+
+    })();
+  </script>
+</body>
+
+</html>

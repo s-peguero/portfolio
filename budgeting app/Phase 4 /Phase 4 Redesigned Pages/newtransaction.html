@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Transactions & History</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="transaction_redesign.css">
+    <script src="chart-min.js"></script>
+</head>
+
+<body>
+<div class="device">
+    <div class="device-content">
+
+        <!-- PAGE HEADER -->
+       <!-- PAGE HEADER -->
+<div class="page-header">
+    <h2>Transactions</h2>
+
+    <!-- TOP RIGHT ICON -->
+    <div class="top-right-icon">
+        <span class="material-icons">keyboard</span>
+    </div>
+
+    <p class="subtitle">Track spending, view history, manage categories</p>
+</div>
+
+        <!-- NEW TRANSACTION CARD -->
+        <div class="card">
+            <h3 class="card-title">+ New Transaction</h3>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>* Name</label>
+                    <input type="text" placeholder="Coffee, Groceries, Uber...">
+                </div>
+
+                <div class="form-group">
+                    <label>* Amount</label>
+                    <input type="number">
+                </div>
+
+                <div class="form-group">
+                    <label>* Date</label>
+                    <input type="date">
+                </div>
+
+              <!-- Category Row -->
+<div class="form-group full-width category-row">
+    <label>* Category</label>
+
+    <div class="category-inline">
+        <select id="categories">
+            <option>Food</option>
+            <option>Transportation</option>
+            <option>Entertainment</option>
+            <option>Shopping</option>
+        </select>
+
+        <button type="button" class="btn add-category-btn">+ Add New Category</button>
+    </div>
+</div>
+
+                <div class="full-width" style="display:flex; gap:10px;">
+                    <button class="btn primary" style="flex:1;">Add</button>
+                    <button class="btn secondary" style="flex:1;">Cancel</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SORT CONTROLS -->
+        <div class="card sort-controls">
+            <label>Sort by:</label>
+            <select>
+                <option value="category">Category (default)</option>
+                <option value="recent">Most Recent</option>
+                <option value="oldest">Oldest</option>
+            </select>
+        </div>
+
+        <!-- HISTORY + CHART ROW -->
+        <div class="transaction-chart-row">
+
+            <!-- TRANSACTION HISTORY -->
+            <div class="card transaction-history-wrapper">
+                <h2 class="card-title">Transaction History</h2>
+
+                <ul class="transaction-list" id="transaction-list">
+
+                    <!-- FOOD -->
+                    <div class="category-header">Food: $60.72</div>
+
+                    <li>
+                        <span><strong>Groceries</strong><br><small>$54.23 • 2025-01-28</small></span>
+                        <div class="transaction-buttons">
+                            <button class="small-btn">Edit</button>
+                            <button class="small-btn">Delete</button>
+                        </div>
+                    </li>
+                    <li>
+                        <span><strong>Starbucks</strong><br><small>$6.49 • 2025-01-29</small></span>
+                        <div class="transaction-buttons">
+                            <button class="small-btn">Edit</button>
+                            <button class="small-btn">Delete</button>
+                        </div>
+                    </li>
+
+                    <!-- TRANSPORTATION -->
+                    <div class="category-header">Transportation: $18.20</div>
+
+                    <li>
+                        <span><strong>Uber Ride</strong><br><small>$18.20 • 2025-01-26</small></span>
+                        <div class="transaction-buttons">
+                            <button class="small-btn">Edit</button>
+                            <button class="small-btn">Delete</button>
+                        </div>
+                    </li>
+
+                    <!-- ENTERTAINMENT -->
+                    <div class="category-header">Entertainment: $15.00</div>
+
+                    <li>
+                        <span><strong>Movie Ticket</strong><br><small>$15.00 • 2025-01-25</small></span>
+                        <div class="transaction-buttons">
+                            <button class="small-btn">Edit</button>
+                            <button class="small-btn">Delete</button>
+                        </div>
+                    </li>
+
+                    <!-- SHOPPING -->
+                    <div class="category-header">Shopping: $22.50</div>
+
+                    <li>
+                        <span><strong>T-Shirt</strong><br><small>$22.50 • 2025-01-22</small></span>
+                        <div class="transaction-buttons">
+                            <button class="small-btn">Edit</button>
+                            <button class="small-btn">Delete</button>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+
+            <!-- PIE CHART -->
+            <div class="card chart-section">
+                <h4>Spending by Category</h4>
+                <br/>
+                <canvas id="spending-chart"></canvas>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="deadlines.html">
+            <span class="material-icons">home</span>
+            <span>Deadlines</span>
+        </a>
+        <a href="income.html">
+            <span class="material-icons">work</span>
+            <span>Income</span>
+        </a>
+        <a href="transactions.html" class="active">
+            <span class="material-icons">payments</span>
+            <span>Transactions</span>
+        </a>
+        <a href="goals.html">
+            <span class="material-icons">leaderboard</span>
+            <span>Goals</span>
+        </a>
+    </nav>
+</div>
+
+<!-- PIE CHART SCRIPT -->
+<script>
+    const ctx = document.getElementById('spending-chart');
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Food', 'Transportation', 'Entertainment', 'Shopping'],
+            datasets: [{
+                data: [60.72, 18.20, 15.00, 22.50],
+                backgroundColor: ['#6C63FF', '#4A90E2', '#F7B500', '#FF6B6B'],
+                borderWidth: 2,
+                borderColor: "#fff"
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
