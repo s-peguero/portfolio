@@ -1,6 +1,6 @@
-# Sammi's Projects
+# Projects
 
-CS student at UMD focused on UI/UX and front-end development.
+
 Portfolio: [link coming soon]
 
 ## Projects
