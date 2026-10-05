@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Income</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="transaction_redesign.css">
+
+    <style>
+        button, input, select { font-family: inherit; }
+        /* Income-specific styles (shared look comes from transaction_redesign.css) */
+        .card { padding: 16px 18px; }
+        .card-title { font-size: 22px; }
+        .muted { font-size: 13px; color: #666; margin: 0 0 10px; }
+
+        .chip-btn {
+            background: #EAE8FF;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 9px;
+            font-size: 12px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .chip-btn:hover { background: #DEE4FF; }
+
+        /* Summary */
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+        .summary-line span { color: #444; font-size: 14px; }
+        .summary-line .big-total { font-size: 26px; font-weight: 600; color: #3D4AA8; }
+        .right { text-align: right; }
+
+        /* Timeline */
+        .controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+        .controls select { font-size: 12px; padding: 6px 8px; }
+        .range-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #444;
+            margin-bottom: 8px;
+        }
+        .range-line strong { font-weight: 600; }
+        .timeline-box {
+            background: #F7F7FF;
+            border: 1px solid #E3E3F5;
+            border-radius: 10px;
+            padding: 26px 18px;
+        }
+        .timeline-track { position: relative; height: 16px; }
+        .timeline-track::before {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; top: 50%;
+            border-top: 2px solid #D5D3F2;
+        }
+        .dot {
+            position: absolute;
+            top: 50%;
+            width: 10px; height: 10px;
+            border: 1.5px solid #3D4AA8;
+            background: white;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            padding: 0;
+        }
+        .dot.recurring { width: 14px; height: 14px; }
+        .dot.selected, .dot:hover { background: #3D4AA8; }
+        .dot-detail { font-size: 12px; color: #555; margin-top: 12px; min-height: 16px; text-align: center; }
+        .legend { font-size: 11px; color: #777; margin-top: 6px; }
+
+        /* Forms */
+        .form-col { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+        .form-col label { font-size: 13px; color: #444; }
+        .form-col input, .form-col select { width: 100%; box-sizing: border-box; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+        .type-fields { display: none; }
+        .type-fields.show { display: block; }
+        .check-row { font-size: 13px; color: #444; display: flex; gap: 6px; align-items: center; }
+        .hint { font-size: 11px; color: #666; margin: 4px 0 0; }
+        .form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+        .form-error { color: #D9483B; font-size: 12px; min-height: 0; }
+
+        /* Statement table */
+        .statement-head { display: flex; justify-content: space-between; align-items: center; }
+        .filter-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 10px 0; }
+        .filter-row label { font-size: 13px; color: #444; display: block; margin-bottom: 4px; }
+        .filter-row select { width: 100%; box-sizing: border-box; font-size: 13px; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { text-align: left; font-weight: 600; color: #444; padding: 8px 4px; border-bottom: 1px solid #E3E3F5; }
+        td { padding: 8px 4px; border-bottom: 1px solid #EEEEF8; color: #333; vertical-align: middle; }
+        td.num, th.num { text-align: right; }
+        td.actions { white-space: nowrap; }
+        tfoot td { font-weight: 600; border-bottom: none; }
+        .empty { text-align: center; color: #888; padding: 14px; }
+        .hidden { display: none; }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed; inset: 0;
+            background: rgba(30, 30, 60, 0.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        .modal-backdrop.show { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            width: min(520px, 92vw);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .recurring-item {
+            background: #F4F3FF;
+            border: 1px solid #E0DFFF;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="device">
+    <div class="device-content">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <h2>Income</h2>
+            <div class="top-right-icon">
+                <span class="material-icons">keyboard</span>
+            </div>
+            <p class="subtitle">Track paychecks, campus jobs, and side gigs in one place.</p>
+        </div>
+
+        <!-- MONTHLY SUMMARY -->
+        <div class="card">
+            <h3 class="card-title">Monthly income summary</h3>
+            <div class="summary-line">
+                <span>Total from ledger</span>
+                <span class="big-total" id="ledgerTotal">$0.00</span>
+            </div>
+            <div class="right">
+                <button class="chip-btn" id="viewStatementBtn">View income statement</button>
+            </div>
+        </div>
+
+        <!-- INCOME TIMELINE -->
+        <div class="card">
+            <h3 class="card-title">Income timeline</h3>
+            <p class="muted">Visual schedule of upcoming recurring paychecks + one-time income.</p>
+
+            <div class="controls">
+                <select id="rangeSelect">
+                    <option value="30">Next 30 days</option>
+                    <option value="60">Next 60 days</option>
+                    <option value="90">Next 90 days</option>
+                </select>
+                <select id="timelineFilter">
+                    <option value="all">All</option>
+                    <option value="recurring">Recurring only</option>
+                    <option value="onetime">One-time only</option>
+                </select>
+                <button class="chip-btn" id="manageRecurringBtn">Manage recurring income</button>
+            </div>
+
+            <div class="range-line">
+                <span id="rangeLabel"></span>
+                <strong id="upcomingTotal"></strong>
+            </div>
+
+            <div class="timeline-box">
+                <div class="timeline-track" id="timelineTrack"></div>
+            </div>
+            <div class="dot-detail" id="dotDetail">Click a dot to see details.</div>
+            <div class="legend">Large dots = recurring • Small dots = one-time</div>
+        </div>
+
+        <!-- INCOME STATEMENT (hidden until "View income statement") -->
+        <div class="card hidden" id="statementCard">
+            <div class="statement-head">
+                <h3 class="card-title" style="margin:0;">Income statement</h3>
+                <button class="chip-btn" id="hideStatementBtn">Hide</button>
+            </div>
+
+            <div class="filter-row">
+                <div>
+                    <label for="sortSelect">Sort by</label>
+                    <select id="sortSelect">
+                        <option value="date-desc">Date (newest first)</option>
+                        <option value="date-asc">Date (oldest first)</option>
+                        <option value="amt-desc">Amount (high to low)</option>
+                        <option value="amt-asc">Amount (low to high)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="typeFilter">Income type</label>
+                    <select id="typeFilter">
+                        <option value="all">All types</option>
+                        <option value="hourly">Hourly</option>
+                        <option value="lump">Lump sum</option>
+                        <option value="salary">Salary / stipend</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="recurringFilter">Recurring</label>
+                    <select id="recurringFilter">
+                        <option value="all">All</option>
+                        <option value="yes">Recurring only</option>
+                        <option value="no">Non-recurring only</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th><th>Title</th><th>Type</th><th>Rec.</th>
+                            <th class="num">Amount</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="statementBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">Total (filtered)</td>
+                            <td class="num" id="filteredTotal">$0.00</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <!-- ADD INCOME -->
+        <div class="card" id="incomeFormCard">
+            <h3 class="card-title" id="formTitle">+ Add income</h3>
+
+            <div class="form-col">
+                <label for="incomeTitle">* Title / name of income</label>
+                <input type="text" id="incomeTitle" placeholder="e.g., Campus barista, internship, tutoring">
+            </div>
+
+            <div class="form-col">
+                <label for="incomeType">* Type of income</label>
+                <select id="incomeType" style="max-width: 200px;">
+                    <option value="" selected disabled>Select type...</option>
+                    <option value="hourly">Hourly</option>
+                    <option value="lump">Lump sum</option>
+                    <option value="salary">Salary / stipend</option>
+                </select>
+            </div>
+
+            <!-- Hourly -->
+            <div class="type-fields" id="fields-hourly">
+                <div class="two-col">
+                    <div class="form-col">
+                        <label for="hourlyRate">* Hourly rate ($)</label>
+                        <input type="number" id="hourlyRate" min="0" step="0.01" placeholder="Enter here">
+                    </div>
+                    <div class="form-col">
+                        <label for="hoursWorked">* Hours worked</label>
+                        <input type="number" id="hoursWorked" min="0" step="0.1" placeholder="Enter here">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lump sum -->
+            <div class="type-fields" id="fields-lump">
+                <div class="form-col">
+                    <label for="lumpAmount">* Amount ($)</label>
+                    <input type="number" id="lumpAmount" min="0" step="0.01" placeholder="Enter here">
+                </div>
+            </div>
+
+            <!-- Salary / stipend -->
+            <div class="type-fields" id="fields-salary">
+                <div class="two-col">
+                    <div class="form-col">
+                        <label for="paycheckAmount">* Amount per paycheck ($)</label>
+                        <input type="number" id="paycheckAmount" min="0" step="0.01" placeholder="Enter here">
+                    </div>
+                    <div class="form-col">
+                        <label for="payFrequency">* Pay frequency</label>
+                        <select id="payFrequency">
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly" selected>Bi-weekly</option>
+                            <option value="semimonthly">Semi-monthly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-col type-fields" id="dateField">
+                <label for="incomeDate">* Date received</label>
+                <input type="date" id="incomeDate">
+            </div>
+
+            <label class="check-row">
+                <input type="checkbox" id="recurringCheck">
+                Save as recurring income (for timeline)
+            </label>
+            <p class="hint">Recurring works best with salary / stipend entries.</p>
+
+            <div class="form-error" id="formError"></div>
+
+            <div class="form-actions">
+                <button class="btn secondary" id="resetBtn">Reset</button>
+                <button class="btn primary" id="saveBtn">Save income</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="bills.html">
+            <span class="material-icons">receipt_long</span>
+            <span>Bills</span>
+        </a>
+        <a href="income.html" class="active">
+            <span class="material-icons">work</span>
+            <span>Income</span>
+        </a>
+        <a href="newtransaction.html">
+            <span class="material-icons">payments</span>
+            <span>Transactions</span>
+        </a>
+        <a href="goals.html">
+            <span class="material-icons">leaderboard</span>
+            <span>Goals</span>
+        </a>
+    </nav>
+</div>
+
+<!-- MANAGE RECURRING MODAL -->
+<div class="modal-backdrop" id="recurringModal">
+    <div class="modal">
+        <h3 class="card-title">Manage recurring income</h3>
+        <p class="muted">Edit pay schedules so your timeline stays accurate.</p>
+        <div id="recurringList"></div>
+        <div class="form-actions">
+            <button class="btn primary" id="closeModalBtn">Done</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- Demo "today" so the prototype always shows the same view ----------
+    const TODAY = parseISO("2025-12-12");
+
+    // ---------- Sample data ----------
+    let ledger = [
+        { id: 1, date: "2025-12-10", title: "Tutoring session (2 hrs)",  type: "hourly", recurring: false, amount: 60.00, rate: 30, hours: 2 },
+        { id: 2, date: "2025-12-08", title: "Textbook resale",           type: "lump",   recurring: false, amount: 85.00 },
+        { id: 3, date: "2025-12-05", title: "Campus library job",        type: "salary", recurring: true,  amount: 420.50, frequency: "biweekly" },
+        { id: 4, date: "2025-11-30", title: "Tutoring session (3 hrs)",  type: "hourly", recurring: false, amount: 90.00, rate: 30, hours: 3 },
+        { id: 5, date: "2025-11-24", title: "Reimbursement (club event)", type: "lump",  recurring: false, amount: 32.75 },
+        { id: 6, date: "2025-11-21", title: "Campus library job",        type: "salary", recurring: true,  amount: 420.50, frequency: "biweekly" }
+    ];
+
+    let recurringSources = [
+        { id: 1, title: "Campus library job", frequency: "biweekly", amount: 420.50, next: "2025-12-19" },
+        { id: 2, title: "Research stipend",   frequency: "monthly",  amount: 250.00, next: "2025-12-15" }
+    ];
+
+    let oneTimeUpcoming = [
+        { title: "Tutoring session (scheduled)", date: "2025-12-20", amount: 150.00 }
+    ];
+
+    let nextId = 100;
+    let editingId = null;
+
+    // ---------- Helpers ----------
+    function parseISO(iso) {
+        const [y, m, d] = iso.split("-").map(Number);
+        return new Date(y, m - 1, d);
+    }
+    function toISO(date) {
+        const m = String(date.getMonth() + 1).padStart(2, "0");
+        const d = String(date.getDate()).padStart(2, "0");
+        return `${date.getFullYear()}-${m}-${d}`;
+    }
+    function addDays(date, n) {
+        const copy = new Date(date);
+        copy.setDate(copy.getDate() + n);
+        return copy;
+    }
+    function step(date, frequency) {
+        if (frequency === "weekly") return addDays(date, 7);
+        if (frequency === "biweekly") return addDays(date, 14);
+        if (frequency === "semimonthly") return addDays(date, 15);
+        const copy = new Date(date);
+        copy.setMonth(copy.getMonth() + 1);
+        return copy;
+    }
+    const money = n => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const shortDate = d => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    const typeLabel = { hourly: "Hourly", lump: "Lump sum", salary: "Salary / stipend" };
+    const $ = id => document.getElementById(id);
+
+    // ---------- Summary ----------
+    function renderSummary() {
+        const total = ledger.reduce((s, e) => s + e.amount, 0);
+        $("ledgerTotal").textContent = money(total);
+    }
+
+    // ---------- Timeline ----------
+    function renderTimeline() {
+        const days = Number($("rangeSelect").value);
+        const filter = $("timelineFilter").value;
+        const end = addDays(TODAY, days);
+
+        let events = [];
+
+        if (filter !== "onetime") {
+            recurringSources.forEach(src => {
+                let d = parseISO(src.next);
+                while (d < TODAY) d = step(d, src.frequency);
+                while (d <= end) {
+                    events.push({ date: new Date(d), title: src.title, amount: src.amount, recurring: true });
+                    d = step(d, src.frequency);
+                }
+            });
+        }
+        if (filter !== "recurring") {
+            oneTimeUpcoming.forEach(e => {
+                const d = parseISO(e.date);
+                if (d >= TODAY && d <= end) events.push({ date: d, title: e.title, amount: e.amount, recurring: false });
+            });
+        }
+
+        events.sort((a, b) => a.date - b.date);
+
+        $("rangeLabel").textContent = `${toISO(TODAY)} → ${toISO(end)}`;
+        $("upcomingTotal").textContent = "Upcoming total: " + money(events.reduce((s, e) => s + e.amount, 0));
+
+        const track = $("timelineTrack");
+        track.innerHTML = "";
+        const span = end - TODAY;
+
+        events.forEach(e => {
+            const dot = document.createElement("button");
+            dot.className = "dot" + (e.recurring ? " recurring" : "");
+            dot.style.left = ((e.date - TODAY) / span * 100) + "%";
+            dot.title = `${shortDate(e.date)} • ${e.title} • ${money(e.amount)}`;
+            dot.addEventListener("click", () => {
+                track.querySelectorAll(".dot").forEach(x => x.classList.remove("selected"));
+                dot.classList.add("selected");
+                $("dotDetail").textContent = `${shortDate(e.date)} · ${e.title} · ${money(e.amount)}${e.recurring ? " (recurring)" : ""}`;
+            });
+            track.appendChild(dot);
+        });
+
+        $("dotDetail").textContent = events.length ? "Click a dot to see details." : "No income expected in this range.";
+    }
+
+    // ---------- Statement ----------
+    function renderStatement() {
+        const sort = $("sortSelect").value;
+        const type = $("typeFilter").value;
+        const rec = $("recurringFilter").value;
+
+        let rows = ledger.filter(e =>
+            (type === "all" || e.type === type) &&
+            (rec === "all" || (rec === "yes" ? e.recurring : !e.recurring))
+        );
+
+        rows.sort((a, b) => {
+            if (sort === "date-desc") return b.date.localeCompare(a.date);
+            if (sort === "date-asc") return a.date.localeCompare(b.date);
+            if (sort === "amt-desc") return b.amount - a.amount;
+            return a.amount - b.amount;
+        });
+
+        const body = $("statementBody");
+        body.innerHTML = rows.length ? "" : `<tr><td colspan="6" class="empty">No entries match these filters.</td></tr>`;
+
+        rows.forEach(e => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${e.date}</td>
+                <td>${e.title}</td>
+                <td>${typeLabel[e.type]}</td>
+                <td>${e.recurring ? "Yes" : "No"}</td>
+                <td class="num">${money(e.amount)}</td>
+                <td class="actions">
+                    <button class="chip-btn edit">Edit</button>
+                    <button class="chip-btn del">Del</button>
+                </td>`;
+            tr.querySelector(".edit").addEventListener("click", () => startEdit(e.id));
+            tr.querySelector(".del").addEventListener("click", () => {
+                if (confirm(`Delete "${e.title}" (${money(e.amount)})?`)) {
+                    ledger = ledger.filter(x => x.id !== e.id);
+                    renderAll();
+                }
+            });
+            body.appendChild(tr);
+        });
+
+        $("filteredTotal").textContent = money(rows.reduce((s, e) => s + e.amount, 0));
+    }
+
+    // ---------- Add / edit form ----------
+    function showTypeFields() {
+        const type = $("incomeType").value;
+        ["hourly", "lump", "salary"].forEach(t => $("fields-" + t).classList.toggle("show", t === type));
+        $("dateField").classList.toggle("show", !!type);
+        $("dateField").querySelector("label").textContent = type === "salary" ? "* Pay date" : "* Date received";
+        if (type === "salary") $("recurringCheck").checked = true;
+    }
+
+    function resetForm() {
+        editingId = null;
+        ["incomeTitle", "hourlyRate", "hoursWorked", "lumpAmount", "paycheckAmount", "incomeDate"].forEach(id => $(id).value = "");
+        $("incomeType").value = "";
+        $("payFrequency").value = "biweekly";
+        $("recurringCheck").checked = false;
+        $("formError").textContent = "";
+        $("formTitle").textContent = "+ Add income";
+        $("saveBtn").textContent = "Save income";
+        showTypeFields();
+    }
+
+    function startEdit(id) {
+        const e = ledger.find(x => x.id === id);
+        if (!e) return;
+        resetForm();
+        editingId = id;
+        $("incomeTitle").value = e.title;
+        $("incomeType").value = e.type;
+        showTypeFields();
+        $("incomeDate").value = e.date;
+        $("recurringCheck").checked = e.recurring;
+        if (e.type === "hourly") { $("hourlyRate").value = e.rate ?? ""; $("hoursWorked").value = e.hours ?? ""; }
+        if (e.type === "lump") $("lumpAmount").value = e.amount;
+        if (e.type === "salary") { $("paycheckAmount").value = e.amount; $("payFrequency").value = e.frequency || "biweekly"; }
+        $("formTitle").textContent = "Edit income";
+        $("saveBtn").textContent = "Update income";
+        $("incomeFormCard").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function saveIncome() {
+        const title = $("incomeTitle").value.trim();
+        const type = $("incomeType").value;
+        const date = $("incomeDate").value;
+        const recurring = $("recurringCheck").checked;
+        const fail = msg => { $("formError").textContent = msg; };
+
+        if (!title || !type || !date) return fail("Please fill in all required (*) fields.");
+
+        const entry = { title, type, date, recurring };
+
+        if (type === "hourly") {
+            entry.rate = parseFloat($("hourlyRate").value);
+            entry.hours = parseFloat($("hoursWorked").value);
+            if (!(entry.rate > 0) || !(entry.hours > 0)) return fail("Enter an hourly rate and hours worked.");
+            entry.amount = Math.round(entry.rate * entry.hours * 100) / 100;
+        } else if (type === "lump") {
+            entry.amount = parseFloat($("lumpAmount").value);
+            if (!(entry.amount > 0)) return fail("Enter an amount.");
+        } else {
+            entry.amount = parseFloat($("paycheckAmount").value);
+            entry.frequency = $("payFrequency").value;
+            if (!(entry.amount > 0)) return fail("Enter an amount per paycheck.");
+        }
+
+        if (editingId !== null) {
+            ledger = ledger.map(x => x.id === editingId ? { ...entry, id: editingId } : x);
+        } else {
+            ledger.push({ ...entry, id: nextId++ });
+
+            // New recurring income also shows up on the timeline
+            if (recurring) {
+                let next = parseISO(date);
+                const freq = entry.frequency || "monthly";
+                while (next < TODAY) next = step(next, freq);
+                recurringSources.push({ id: nextId++, title, frequency: freq, amount: entry.amount, next: toISO(next) });
+            }
+        }
+
+        resetForm();
+        renderAll();
+    }
+
+    // ---------- Manage recurring modal ----------
+    function renderRecurringModal() {
+        const list = $("recurringList");
+        list.innerHTML = recurringSources.length ? "" : `<p class="muted">No recurring income yet.</p>`;
+
+        recurringSources.forEach(src => {
+            const item = document.createElement("div");
+            item.className = "recurring-item";
+            item.innerHTML = `
+                <div class="form-col">
+                    <label>Title</label>
+                    <input type="text" data-field="title" value="${src.title}">
+                </div>
+                <div class="two-col">
+                    <div class="form-col">
+                        <label>Pay frequency</label>
+                        <select data-field="frequency">
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-weekly</option>
+                            <option value="semimonthly">Semi-monthly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div class="form-col">
+                        <label>Per-paycheck amount ($)</label>
+                        <input type="number" min="0" step="0.01" data-field="amount" value="${src.amount}">
+                    </div>
+                </div>
+                <div class="two-col">
+                    <div class="form-col">
+                        <label>Next pay date</label>
+                        <input type="date" data-field="next" value="${src.next}">
+                    </div>
+                    <div class="form-col" style="justify-content:flex-end;">
+                        <button class="chip-btn remove">Remove</button>
+                    </div>
+                </div>`;
+            item.querySelector('[data-field="frequency"]').value = src.frequency;
+
+            item.querySelectorAll("[data-field]").forEach(input => {
+                input.addEventListener("change", () => {
+                    const field = input.dataset.field;
+                    src[field] = field === "amount" ? (parseFloat(input.value) || 0) : input.value;
+                    renderTimeline();
+                });
+            });
+            item.querySelector(".remove").addEventListener("click", () => {
+                if (confirm(`Remove "${src.title}" from recurring income?`)) {
+                    recurringSources = recurringSources.filter(x => x.id !== src.id);
+                    renderRecurringModal();
+                    renderTimeline();
+                }
+            });
+            list.appendChild(item);
+        });
+    }
+
+    // ---------- Wiring ----------
+    function renderAll() {
+        renderSummary();
+        renderTimeline();
+        renderStatement();
+    }
+
+    $("rangeSelect").addEventListener("change", renderTimeline);
+    $("timelineFilter").addEventListener("change", renderTimeline);
+    ["sortSelect", "typeFilter", "recurringFilter"].forEach(id => $(id).addEventListener("change", renderStatement));
+
+    $("viewStatementBtn").addEventListener("click", () => {
+        $("statementCard").classList.remove("hidden");
+        $("statementCard").scrollIntoView({ behavior: "smooth" });
+    });
+    $("hideStatementBtn").addEventListener("click", () => $("statementCard").classList.add("hidden"));
+
+    $("incomeType").addEventListener("change", showTypeFields);
+    $("saveBtn").addEventListener("click", saveIncome);
+    $("resetBtn").addEventListener("click", resetForm);
+
+    $("manageRecurringBtn").addEventListener("click", () => {
+        renderRecurringModal();
+        $("recurringModal").classList.add("show");
+    });
+    $("closeModalBtn").addEventListener("click", () => $("recurringModal").classList.remove("show"));
+    $("recurringModal").addEventListener("click", e => {
+        if (e.target.id === "recurringModal") $("recurringModal").classList.remove("show");
+    });
+
+    resetForm();
+    renderAll();
+</script>
+</body>
+</html>

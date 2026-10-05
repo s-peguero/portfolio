@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bills</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="transaction_redesign.css">
+
+    <style>
+        button, input, select { font-family: inherit; }
+        /* Bills-specific styles (shared look comes from transaction_redesign.css) */
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            padding: 16px 20px;
+        }
+        .summary-item .value { font-size: 22px; font-weight: 600; }
+        .summary-item .label { font-size: 13px; color: #555; }
+        .summary-item:first-child { text-align: left; }
+        .summary-item:last-child  { text-align: right; }
+        .total-color  { color: #3D4AA8; }
+        .paid-color   { color: #4E9A51; }
+        .unpaid-color { color: #D9483B; }
+
+        .bill-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 14px;
+        }
+        .bill-form .form-group { display: flex; flex-direction: column; }
+        .bill-form .form-group label { font-weight: 500; color: #444; }
+        .bill-form input, .bill-form select { width: 100%; box-sizing: border-box; }
+        .bill-form .btn { padding: 11px; }
+
+        .bill-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .bill-list li {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: #F4F3FF;
+            border: 1px solid #E0DFFF;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+        }
+        .bill-list input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            accent-color: #4E9A51;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .bill-info { flex: 1; }
+        .bill-info strong { font-size: 16px; color: #333; }
+        .bill-info small { color: #555; }
+        .bill-status { font-weight: 600; font-size: 14px; }
+        .bill-delete {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+        }
+        .bill-delete:hover { color: #D9483B; }
+        .form-error { color: #D9483B; font-size: 12px; grid-column: 1 / 3; }
+    </style>
+</head>
+
+<body>
+<div class="device">
+    <div class="device-content">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <h2>Bills</h2>
+            <div class="top-right-icon">
+                <span class="material-icons">keyboard</span>
+            </div>
+            <p class="subtitle">Track payments, due dates, and upcoming expenses</p>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="card summary-row">
+            <div class="summary-item">
+                <div class="value total-color" id="totalAmount">$0</div>
+                <div class="label">Total This Month</div>
+            </div>
+            <div class="summary-item">
+                <div class="value paid-color" id="paidAmount">$0</div>
+                <div class="label">Paid</div>
+            </div>
+            <div class="summary-item">
+                <div class="value unpaid-color" id="unpaidAmount">$0</div>
+                <div class="label">Remaining</div>
+            </div>
+        </div>
+
+        <!-- NEW BILL -->
+        <div class="card" style="padding: 18px 26px;">
+            <h3 class="card-title" style="font-size: 24px;">+ New Bill</h3>
+
+            <div class="bill-form">
+                <div class="form-group">
+                    <label for="billName">* Name</label>
+                    <input type="text" id="billName" placeholder="Electricity, Rent, Internet...">
+                </div>
+                <div class="form-group">
+                    <label for="billDate">* Due Date</label>
+                    <input type="date" id="billDate">
+                </div>
+                <div class="form-group">
+                    <label for="billAmount">* Amount</label>
+                    <input type="number" id="billAmount" placeholder="$" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="billCategory">Category</label>
+                    <select id="billCategory">
+                        <option>Utilities</option>
+                        <option>Housing</option>
+                        <option>Subscription</option>
+                        <option>Loan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="billStatus">* Status</label>
+                    <select id="billStatus">
+                        <option value="unpaid">Unpaid</option>
+                        <option value="paid">Paid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="billNotes">Notes</label>
+                    <input type="text" id="billNotes" placeholder="Optional">
+                </div>
+
+                <div class="form-error" id="formError"></div>
+
+                <button class="btn primary" id="addBillBtn">Add Bill</button>
+                <button class="btn secondary" id="cancelBtn">Cancel</button>
+            </div>
+        </div>
+
+        <!-- BILL LIST -->
+        <div class="card" style="padding: 18px;">
+            <h3 class="card-title">Your Bills</h3>
+            <ul class="bill-list" id="billList"></ul>
+        </div>
+
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="bills.html" class="active">
+            <span class="material-icons">receipt_long</span>
+            <span>Bills</span>
+        </a>
+        <a href="income.html">
+            <span class="material-icons">work</span>
+            <span>Income</span>
+        </a>
+        <a href="newtransaction.html">
+            <span class="material-icons">payments</span>
+            <span>Transactions</span>
+        </a>
+        <a href="goals.html">
+            <span class="material-icons">leaderboard</span>
+            <span>Goals</span>
+        </a>
+    </nav>
+</div>
+
+<script>
+    // Sample bills (matches the Phase 4 screenshot)
+    let bills = [
+        { name: "Electricity", amount: 95.20,   due: "2025-12-20", category: "Utilities",    paid: false, notes: "" },
+        { name: "Internet",    amount: 60.00,   due: "2025-12-18", category: "Utilities",    paid: true,  notes: "" },
+        { name: "Rent",        amount: 1200.00, due: "2025-12-01", category: "Housing",      paid: true,  notes: "" },
+        { name: "Netflix",     amount: 14.80,   due: "2025-12-15", category: "Subscription", paid: false, notes: "" }
+    ];
+
+    const money = n => "$" + n.toLocaleString("en-US", { maximumFractionDigits: 2 });
+    const moneyFull = n => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    function formatDate(iso) {
+        const [y, m, d] = iso.split("-").map(Number);
+        return new Date(y, m - 1, d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    function render() {
+        const list = document.getElementById("billList");
+        list.innerHTML = "";
+
+        bills.forEach((bill, i) => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <input type="checkbox" ${bill.paid ? "checked" : ""} aria-label="Mark ${bill.name} as paid">
+                <div class="bill-info">
+                    <strong>${bill.name}</strong><br>
+                    <small>${moneyFull(bill.amount)} • Due ${formatDate(bill.due)} • ${bill.category}${bill.notes ? " • " + bill.notes : ""}</small>
+                </div>
+                <span class="bill-status ${bill.paid ? "paid-color" : "unpaid-color"}">${bill.paid ? "Paid" : "Unpaid"}</span>
+                <button class="bill-delete" title="Delete bill"><span class="material-icons">close</span></button>
+            `;
+            li.querySelector("input").addEventListener("change", e => {
+                bills[i].paid = e.target.checked;
+                render();
+            });
+            li.querySelector(".bill-delete").addEventListener("click", () => {
+                if (confirm(`Delete "${bill.name}"?`)) {
+                    bills.splice(i, 1);
+                    render();
+                }
+            });
+            list.appendChild(li);
+        });
+
+        const total = bills.reduce((s, b) => s + b.amount, 0);
+        const paid  = bills.filter(b => b.paid).reduce((s, b) => s + b.amount, 0);
+        document.getElementById("totalAmount").textContent  = money(total);
+        document.getElementById("paidAmount").textContent   = money(paid);
+        document.getElementById("unpaidAmount").textContent = money(total - paid);
+    }
+
+    function clearForm() {
+        ["billName", "billDate", "billAmount", "billNotes"].forEach(id => document.getElementById(id).value = "");
+        document.getElementById("billCategory").selectedIndex = 0;
+        document.getElementById("billStatus").selectedIndex = 0;
+        document.getElementById("formError").textContent = "";
+    }
+
+    document.getElementById("addBillBtn").addEventListener("click", () => {
+        const name   = document.getElementById("billName").value.trim();
+        const due    = document.getElementById("billDate").value;
+        const amount = parseFloat(document.getElementById("billAmount").value);
+
+        if (!name || !due || isNaN(amount) || amount <= 0) {
+            document.getElementById("formError").textContent = "Please fill in all required (*) fields.";
+            return;
+        }
+
+        bills.push({
+            name,
+            due,
+            amount,
+            category: document.getElementById("billCategory").value,
+            paid: document.getElementById("billStatus").value === "paid",
+            notes: document.getElementById("billNotes").value.trim()
+        });
+        clearForm();
+        render();
+    });
+
+    document.getElementById("cancelBtn").addEventListener("click", clearForm);
+
+    render();
+</script>
+</body>
+</html>
