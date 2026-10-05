@@ -11,4 +11,4 @@ Portfolio: [link coming soon]
 | Memory Map | Mobile, location-based memory sharing app that allows users to post and revisit meaningful memories tied to physical locations | [Demo Video](https://youtu.be/9W-R14T3vu8) | [Final Report](memory%20map/Final.pdf) |
 | Brew Journal | Full-stack web app for discovering coffee drinks, saving tasting notes, and rating coffees (team of 5) | [Live App](https://brew-journal-4dc8.onrender.com/) · [Demo Video](https://youtu.be/-yP3qkCUPgY) | [Code](https://github.com/s-peguero/BrewJournal) |
 ## Built with
-HTML, CSS, JavaScript, Figma
+HTML, CSS, JavaScript
