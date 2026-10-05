@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta charset="utf-8" />
+  <title>Income Page</title>
+
+  <style>
+    .section-title h3 {
+      margin: 20px 0 10px 0;
+      font-size: 30px;
+      color: #000000;
+    }
+
+    #incomeTitle {
+      width: 100%;
+      padding: 8px;
+      margin-top: 6px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    #incomeTitle:focus {
+      border-bottom-color: #666;
+    }
+
+    :root {
+      --line: rgb(255, 255, 255);
+      --radius: 12px;
+      --pad: 14px;
+    }
+
+    body {
+      margin: 0;
+      font-size: 18px;
+      font-family: 'proxima-nova', sans-serif;
+      background: #fff;
+      color: black;
+    }
+
+
+    .device {
+      max-width: 640px;
+      min-height: 960px;
+      background-color: #FFFFFF;
+      margin: 40px auto;
+      padding: 24px;
+      box-sizing: border-box;
+      border: 2px solid black;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .device {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .device nav.navbar {
+      margin-top: auto;
+    }
+
+    .wrap {
+      max-width: 640px;
+      margin: 3rem auto;
+      padding: 0 16px;
+    }
+
+    /* form spacing */
+    form {
+      padding: 18px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
+
+    /* labels and headings */
+
+   
+    .total-banner {
+      display: flex;
+      align-items: baseline;
+      color: #008A10;
+      gap: 12px;
+    }
+
+    .total-banner>span {
+     
+      font-size: 26px;
+
+      font-weight: 700;
+    }
+
+    #totalIncome {
+      font-size: 26px;
+      
+      
+      
+      
+    }
+
+    label {
+      display: inline-block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #000;
+    }
+
+    legend {
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      color: #000;
+      font-size: 26px;
+    }
+
+    /* grid layouts */
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    @media (min-width: 640px) {
+      .grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* buttons */
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      justify-content: flex-end;
+    }
+
+    /* radio group styling */
+    .radios {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background-color: white;
+      border: 1px solid #e0e0ff;
+    }
+
+    .radio {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+    }
+
+    .radio input {
+      border: 1px solid black;
+      accent-color: #6a6aff;
+    }
+
+    /* conditional sections */
+    .conditional {
+      background-color: white;
+      border: 1px solid #e6e6ff;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 18px;
+    }
+
+    .conditional h3,
+    .conditional label,
+    .conditional legend {
+      color: #111;
+    }
+
+    .conditional input[type="text"],
+    .conditional input[type="number"],
+    .conditional input[type="date"],
+    .conditional select,
+    .conditional textarea {
+      background: #ffffff;
+      color: #111;
+      border: 1px solid black;
+      border-radius: 5px;
+      padding: 8px 10px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .conditional input:focus,
+    .conditional select:focus,
+    .conditional textarea:focus {
+      border-color: #999;
+      outline: none;
+    }
+
+    .conditional ::placeholder {
+      color: #555;
+    }
+
+    /* buttons */
+    .btn {
+      background-color: #FFFFFF;
+      color: #000000;
+      font-size: 16px;
+      padding: 10px 20px;
+      border: 1px solid #CDCDFF;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      background-color: #b6b6b6;
+    }
+
+    /* card sections */
+    .box {
+      background-color: #CDCDFF;
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+
+    fieldset {
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+
+
+    input:focus,
+    select:focus,
+    textarea:focus,
+    button:focus {
+      outline: 2px solid #CDCDFF;
+      outline-offset: 2px;
+    }
+
+
+    [hidden] {
+      display: none !important;
+    }
+
+    /* nav bar*/
+    .navbar {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: #CDCDFF;
+      border-top: 2px solid #aaa;
+      border-radius: 8px;
+      padding: 10px 0;
+      margin-top: 30px;
+    }
+
+    .navbar a {
+      text-decoration: none;
+      color: #000;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .navbar a.active {
+      font-weight: bold;
+    }
+
+    .navbar .material-icons {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+
+    /* savings modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 24px;
+      overflow: auto;
+    }
+
+    .modal.show {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      width: 90%;
+      max-width: 500px;
+      padding: 20px;
+      border: 2px solid #888;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+      max-height: 85vh;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body.modal-open {
+
+      overflow: hidden;
+    }
+
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal select,
+    .modal input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .scrollable-container {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+
+    }
+
+    /*ledger modal*/
+    .ledger-modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+    }
+
+    .ledger-modal.show {
+      display: block;
+    }
+
+    .ledger-content {
+      background: #fff;
+      margin: 8% auto;
+      padding: 20px;
+      border: 2px solid #888;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 85vh;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .ledger-content h3 {
+      margin: 0 0 12px;
+    }
+
+    table {
+      width: 100%;
+      max-width: 600px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    .xbtn {
+      background: none;
+      border: 1px solid #bbb;
+      padding: 2px 8px;
+      border-radius: 6px;
+      color: #EE0000;
+      cursor: pointer;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    /* confirm bar*/
+    .confirm-bar {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border: 1px solid #f3b4b4;
+      background: #fff7f7;
+      border-radius: 10px;
+    }
+
+    .confirm-bar p {
+      margin: 8px 0 0;
+      color: #EE0000;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 10px;
+    }
+
+    .btn-danger {
+      background: #fee;
+      border-color: #f19999;
+      color: #EE0000;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="device">
+    <div class="section-title">
+      <h3>Income</h3>
+    </div>
+    <!--  total income banner -->
+    <div class="total-banner" aria-live="polite">
+      <span>Total Income</span>
+      <strong id="totalIncome">0.00</strong>
+    </div>
+    <div class="box" class="card" role="region" aria-labelledby="incomeFormTitle">
+      <h3 id="incomeFormTitle">+ Add Income</h3>
+      <button id="openLedgerBtn" class="btn" type="button">View Ledger</button>
+      <div class="scrollable-container">
+        <form id="incomeForm" novalidate>
+          <!-- title of income revenue -->
+          <div>
+            <label for="incomeTitle">Title / Name of Income</label>
+            <input id="incomeTitle" name="title" type="text"
+              placeholder="e.g., Campus Barista, Freelance, Company Name " required />
+          </div>
+
+          <!-- type of income  -->
+          <div class="field">
+            <fieldset aria-describedby="typeHelp">
+              <div>
+                <br /><br />
+                <label>Type of Income</label>
+                <div class="radios" role="radiogroup" aria-label="Income type">
+                  <label class="radio">
+                    <input type="radio" name="incomeType" id="typeHourly" value="hourly" />
+                    <span>Hourly</span>
+                  </label>
+                  <label class="radio">
+                    <input type="radio" name="incomeType" id="typeLump" value="lump" />
+                    <span>Lump sum (odd jobs / one-off)</span>
+                  </label>
+                  <label class="radio">
+                    <input type="radio" name="incomeType" id="typeSalary" value="salary" />
+                    <span>Annual salary</span>
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+
+          <!-- CONDITIONAL SECTIONS -->
+          <!-- hourly -->
+          <section id="hourlyFields" class="conditional" hidden aria-labelledby="hourlyHeading">
+            <h3 id="hourlyHeading">Hourly details</h3>
+            <div class="grid grid-3">
+              <div class="field">
+                <label for="hourlyRate">Hourly rate </label>
+                <input id="hourlyRate" name="hourlyRate" type="number" step="0.01" min="0" inputmode="decimal"
+                  placeholder="e.g., 18.50" data-required="true" disabled />
+              </div>
+              <div class="field">
+                <label for="hoursWorked">Hours Worked</label>
+                <input id="hoursWorked" name="hoursWorked" type="number" step="0.1" min="0" max="168"
+                  inputmode="decimal" placeholder="e.g., 20" data-required="true" disabled />
+              </div>
+              <div class="field">
+                <label for="hourlyDate">Date</label>
+                <input id="hourlyDate" name="hourlyDate" type="date" disabled />
+              </div>
+            </div>
+          </section>
+
+          <!-- lump sum -->
+          <section id="lumpFields" class="conditional" hidden aria-labelledby="lumpHeading">
+            <h3 id="lumpHeading" style="margin:0 0 8px;">Lump sum details</h3>
+            <div class="grid grid-2">
+              <div class="field">
+                <label for="lumpAmount">Amount</label>
+                <input id="lumpAmount" name="lumpAmount" type="number" step="0.01" min="0" inputmode="decimal"
+                  placeholder="e.g., 250.00" data-required="true" disabled />
+              </div>
+              <div class="field">
+                <label for="lumpDate">Date</label>
+                <input id="lumpDate" name="lumpDate" type="date" disabled />
+              </div>
+            </div>
+            <div class="field">
+              <label for="lumpNotes">Notes (optional)</label>
+              <textarea id="lumpNotes" name="lumpNotes"
+                placeholder="e.g., Moved furniture for neighbor; paid via cash app." disabled></textarea>
+            </div>
+          </section>
+
+          <!-- annual salary -->
+          <section id="salaryFields" class="conditional" hidden aria-labelledby="salaryHeading">
+            <h3 id="salaryHeading" style="margin:0 0 8px;">Salary details</h3>
+            <div class="grid grid-3">
+              <div class="field">
+                <label for="annualSalary">Annual salary</label>
+                <input id="annualSalary" name="annualSalary" type="number" step="1" min="0" inputmode="decimal"
+                  placeholder="e.g., 65000" data-required="true" disabled />
+              </div>
+              <div class="field">
+                <label for="payFrequency">Pay frequency</label>
+                <select id="payFrequency" name="payFrequency" data-required="true" disabled>
+                  <option value="" selected disabled>Choose…</option>
+                  <option value="weekly">Weekly</option>
+                  <option value="biweekly">Bi-weekly (26/yr)</option>
+                  <option value="semimonthly">Semi-monthly (24/yr)</option>
+                  <option value="monthly">Monthly (12/yr)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="annualDate">Date</label>
+                <input id="annualDate" name="annualDate" type="date" disabled />
+              </div>
+            </div>
+          </section>
+
+          <div class="actions">
+            <button class="btn" type="submit">Save income</button>
+            <button class="btn" type="button" class="secondary" id="resetBtn" aria-label="Reset form">
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <nav class="navbar">
+      <a href="newDeadlines2.html">
+        <span class="material-icons">home</span>
+        <span>Deadlines</span>
+      </a>
+      <a href="income2.html" class="active">
+        <span class="material-icons">work</span>
+        <span>Income</span>
+      </a>
+      <a href="transaction.html">
+        <span class="material-icons">payments</span>
+        <span>Transactions</span>
+      </a>
+      <a href="updatedGoals2.html">
+        <span class="material-icons">leaderboard</span>
+        <span>Goals</span>
+      </a>
+    </nav>
+    <!-- savings modal -->
+  <div id="savingsModal" class="modal">
+    <div class="modal-content">
+      <h3>Add to Savings?</h3>
+      <p>Would you like to add a portion of this income to a savings goal?</p>
+      <div class="modal-buttons">
+        <button id="modalYes" class="btn">Yes</button>
+        <button id="modalNo" class="btn">No</button>
+      </div>
+
+      <div id="savingsSelection" class="hidden">
+        <input type="number" id="savingsAmount" placeholder="Enter amount" step="0.01" min="0">
+
+        <label for="goalSelect">Select Savings Goal:</label>
+        <select id="goalSelect">
+          <option value="">Choose a goal...</option>
+          <option value="new">+ Create New Goal</option>
+        </select>
+
+        <div id="newGoalForm" class="hidden">
+          <input type="text" id="newGoalName" placeholder="Goal name (e.g., Vacation)">
+          <input type="number" id="newGoalTarget" placeholder="Target amount $">
+        </div>
+
+        <div class="modal-buttons" style="margin-top: 20px;">
+          <button id="confirmSavings" class="btn">Confirm</button>
+          <button id="cancelSavings" class="btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ledger modal -->
+  <div id="ledgerModal" class="ledger-modal" aria-hidden="true" role="dialog" aria-modal="true"
+    aria-labelledby="ledgerTitle">
+    <div class="ledger-content">
+      <h3 id="ledgerTitle">Income Ledger</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Details</th>
+            <th>Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="ledgerBody"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" style="text-align:right;"><strong>Total</strong></td>
+            <td id="ledgerTotal"><strong>0.00</strong></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+      <div class="modal-actions">
+        <button id="clearAllBtn" class="btn" type="button">Clear All</button>
+        <button id="closeLedgerBtn" class="btn" type="button">Close</button>
+      </div>
+      <!-- confirm clear panel -->
+      <div id="confirmClear" class="confirm-bar hidden" role="alertdialog" aria-labelledby="confirmClearTitle">
+        <div id="confirmClearTitle" style="font-weight:700">Delete all entries?</div>
+        <p>This will permanently remove every income record from the ledger.</p>
+        <div class="confirm-actions">
+          <button id="cancelClear" class="btn" type="button">Cancel</button>
+          <button id="confirmClearBtn" class="btn btn-danger" type="button">Delete all</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  
+  </div>
+
+
+  <script>
+    (function () {
+
+      const form = document.getElementById('incomeForm');
+      const radios = Array.from(document.querySelectorAll('input[name="incomeType"]'));
+      const sections = {
+        hourly: document.getElementById('hourlyFields'),
+        lump: document.getElementById('lumpFields'),
+        salary: document.getElementById('salaryFields')
+      };
+
+      // savings
+      const modal = document.getElementById("savingsModal");
+      const modalYes = document.getElementById("modalYes");
+      const modalNo = document.getElementById("modalNo");
+      const savingsSelection = document.getElementById("savingsSelection");
+      const savingsAmount = document.getElementById("savingsAmount");
+      const goalSelect = document.getElementById("goalSelect");
+      const newGoalForm = document.getElementById("newGoalForm");
+      const confirmSavings = document.getElementById("confirmSavings");
+      const cancelSavings = document.getElementById("cancelSavings");
+
+      // ledger and totals
+      const totalIncomeEl = document.getElementById('totalIncome');
+      const openLedgerBtn = document.getElementById('openLedgerBtn');
+      const ledgerModalEl = document.getElementById('ledgerModal');
+      const closeLedgerBtn = document.getElementById('closeLedgerBtn');
+      const clearAllBtn = document.getElementById('clearAllBtn');
+      const ledgerBody = document.getElementById('ledgerBody');
+      const ledgerTotal = document.getElementById('ledgerTotal');
+
+
+      let goals = JSON.parse(localStorage.getItem('goals')) || [];
+      let pendingIncome = null;
+
+
+      let ledger = JSON.parse(localStorage.getItem('incomeLedger')) || [];
+
+      // utils
+      const fmtUSD = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+      const today = () => new Date().toISOString().split('T')[0];
+      const uid = () => Math.random().toString(36).slice(2, 9);
+      const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+      function persistLedger() {
+        localStorage.setItem('incomeLedger', JSON.stringify(ledger));
+      }
+
+      function computeTotal() {
+        return ledger.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+      }
+
+      function updateTotalUI() {
+        const total = computeTotal();
+        totalIncomeEl.textContent = total.toFixed(2);
+        ledgerTotal.innerHTML = `<strong>${total.toFixed(2)}</strong>`;
+      }
+
+      function renderLedger() {
+        if (!ledgerBody) return;
+        ledgerBody.innerHTML = ledger.map(item => `
+        <tr data-id="${esc(item.id)}">
+          <td>${esc(item.date)}</td>
+          <td>${esc(item.title)}</td>
+          <td>${esc(item.type)}</td>
+          <td>${esc(item.details || '')}</td>
+          <td>${Number(item.amount).toFixed(2)}</td>
+          <td><button class="xbtn" data-del="${esc(item.id)}" type="button">Remove</button></td>
+        </tr>
+      `).join('');
+        updateTotalUI();
+      }
+
+      function addIncomeToLedger(entry) {
+        ledger.push(entry);
+        persistLedger();
+        renderLedger();
+      }
+
+      //form 
+      function setSectionActive(sectionEl, active) {
+        sectionEl.hidden = !active;
+        const fields = sectionEl.querySelectorAll('input, select, textarea');
+        fields.forEach(el => {
+          el.disabled = !active;
+          el.required = active && el.dataset.required === 'true';
+        });
+      }
+
+      function showFor(type) {
+        Object.entries(sections).forEach(([key, el]) => setSectionActive(el, key === type));
+      }
+
+      const prechecked = radios.find(r => r.checked);
+      if (prechecked) showFor(prechecked.value);
+      radios.forEach(r => r.addEventListener('change', (e) => showFor(e.target.value)));
+
+      //income calcs
+      function calculateIncomeAmount(data) {
+        const incomeType = data.get('incomeType');
+        if (incomeType === 'hourly') {
+          const rate = parseFloat(data.get('hourlyRate'));
+          const hours = parseFloat(data.get('hoursWorked'));
+          return (rate || 0) * (hours || 0);
+        } else if (incomeType === 'lump') {
+          return parseFloat(data.get('lumpAmount')) || 0;
+        } else if (incomeType === 'salary') {
+          const annual = parseFloat(data.get('annualSalary')) || 0;
+          const frequency = data.get('payFrequency');
+          const divisors = { weekly: 52, biweekly: 26, semimonthly: 24, monthly: 12 };
+          return divisors[frequency] ? (annual / divisors[frequency]) : 0;
+        }
+        return 0;
+      }
+
+      function recordFromFormData(data) {
+        const type = data.get('incomeType') || 'unknown';
+        const title = (data.get('title') || 'Untitled income').trim();
+        const amount = calculateIncomeAmount(data);
+
+        let date = today();
+        let details = '';
+
+        if (type === 'hourly') {
+          const rate = parseFloat(data.get('hourlyRate')) || 0;
+          const hours = parseFloat(data.get('hoursWorked')) || 0;
+          date = data.get('hourlyDate') || today();
+          details = `${fmtUSD.format(rate)} × ${hours} hrs`;
+        } else if (type === 'lump') {
+          date = data.get('lumpDate') || today();
+          const notes = (data.get('lumpNotes') || '').trim();
+          details = notes ? `Notes: ${notes}` : '';
+        } else if (type === 'salary') {
+          date = data.get('annualDate') || today();
+          const annual = parseFloat(data.get('annualSalary')) || 0;
+          const freq = data.get('payFrequency') || '';
+          const freqLabel = { weekly: 'Weekly', biweekly: 'Bi-weekly', semimonthly: 'Semi-monthly', monthly: 'Monthly' }[freq] || freq;
+          details = `Annual ${fmtUSD.format(annual)} • ${freqLabel || '—'} (~${fmtUSD.format(amount)} / pay)`;
+        }
+
+        return {
+          id: uid(),
+          title,
+          type,
+          date,
+          details,
+          amount: Number(amount) || 0,
+          createdAt: new Date().toISOString()
+        };
+      }
+
+      //savings
+
+      function populateGoalSelect() {
+        goalSelect.innerHTML = '<option value="">Choose a goal...</option>';
+        goals.forEach((goal, index) => {
+          const option = document.createElement("option");
+          option.value = index;
+          option.textContent = `${goal.name} ($${(goal.saved || 0).toFixed(2)} of $${goal.target.toFixed(2)})`;
+          goalSelect.appendChild(option);
+        });
+        const newOption = document.createElement("option");
+        newOption.value = "new";
+        newOption.textContent = "+ Create New Goal";
+        goalSelect.appendChild(newOption);
+      }
+
+      modalYes.addEventListener("click", () => {
+        if (!pendingIncome) return;
+        savingsSelection.classList.remove("hidden");
+        savingsAmount.placeholder = `Max: $${pendingIncome.amount.toFixed(2)}`;
+      });
+
+      modalNo.addEventListener("click", () => {
+      
+        pendingIncome = null;
+      });
+
+      goalSelect.addEventListener("change", () => {
+        if (goalSelect.value === "new") newGoalForm.classList.remove("hidden");
+        else newGoalForm.classList.add("hidden");
+      });
+
+      function openSavingsModal() {
+        modal.style.removeProperty('display');
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
+      }
+      function closeSavingsModal() {
+        modal.classList.remove('show');
+        document.body.classList.remove('modal-open');
+      }
+
+      function showSavingsModal(incomeData) {
+        pendingIncome = incomeData;
+        savingsSelection.classList.add("hidden");
+        newGoalForm.classList.add("hidden");
+        savingsAmount.value = "";
+        populateGoalSelect();
+        openSavingsModal();
+      }
+
+      /* close when clicking overlay */
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          pendingIncome = null;
+          closeSavingsModal();
+        }
+      });
+
+      modalYes.addEventListener("click", () => {
+        if (!pendingIncome) return;
+        savingsSelection.classList.remove("hidden");
+        savingsAmount.placeholder = `Max: $${pendingIncome.amount.toFixed(2)}`;
+        // ensure content is scrolled to the top when revealed
+        document.querySelector('#savingsModal .modal-content').scrollTop = 0;
+      });
+
+      modalNo.addEventListener("click", () => {
+        pendingIncome = null;
+        closeSavingsModal();
+      });
+
+      goalSelect.addEventListener("change", () => {
+        if (goalSelect.value === "new") newGoalForm.classList.remove("hidden");
+        else newGoalForm.classList.add("hidden");
+      });
+
+      confirmSavings.addEventListener("click", () => {
+        const amount = parseFloat(savingsAmount.value);
+        const selectedValue = goalSelect.value;
+        if (!pendingIncome || !amount || amount <= 0) return;
+
+        if (selectedValue === "new") {
+          const name = document.getElementById("newGoalName").value.trim();
+          const target = parseFloat(document.getElementById("newGoalTarget").value);
+          if (!name || !target || target <= 0) return;
+
+          const newGoal = {
+            id: uid(),
+            name,
+            target,
+            saved: amount,
+            deposits: [{
+              name: pendingIncome.title,
+              amount: amount,
+              date: today(),
+              source: pendingIncome.source || "Income"
+            }]
+          };
+          goals.push(newGoal);
+        } else {
+          const idx = parseInt(selectedValue, 10);
+          if (!Number.isNaN(idx) && goals[idx]) {
+            goals[idx].saved = (goals[idx].saved || 0) + amount;
+            goals[idx].deposits = goals[idx].deposits || [];
+            goals[idx].deposits.push({
+              name: pendingIncome.title,
+              amount: amount,
+              date: today(),
+              source: pendingIncome.source || "Income"
+            });
+          }
+        }
+
+        localStorage.setItem("goals", JSON.stringify(goals));
+        pendingIncome = null;
+        closeSavingsModal();
+      });
+
+      cancelSavings.addEventListener("click", () => {
+        pendingIncome = null;
+        closeSavingsModal();
+      });
+
+      // submit 
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = new FormData(form);
+        const incomeAmount = calculateIncomeAmount(data);
+
+        if (incomeAmount > 0) {
+          const record = recordFromFormData(data);
+          // save/update totals 
+          addIncomeToLedger(record);
+
+          //savings popup
+          showSavingsModal({
+            title: record.title,
+            amount: record.amount
+          });
+        }
+
+        // reset form 
+        form.reset();
+        Object.values(sections).forEach(el => setSectionActive(el, false));
+      });
+
+      // reset button
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        form.reset();
+        Object.values(sections).forEach(el => setSectionActive(el, false));
+      });
+
+      //ledger pop up
+      openLedgerBtn.addEventListener('click', () => {
+        renderLedger();
+        ledgerModalEl.classList.add('show');
+        ledgerModalEl.setAttribute('aria-hidden', 'false');
+      });
+
+      closeLedgerBtn.addEventListener('click', () => {
+        ledgerModalEl.classList.remove('show');
+        ledgerModalEl.setAttribute('aria-hidden', 'true');
+      });
+
+      //delete single entry
+      ledgerBody.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-del]');
+        if (!btn) return;
+        const id = btn.getAttribute('data-del');
+        const idx = ledger.findIndex(i => i.id === id);
+        if (idx !== -1) {
+          ledger.splice(idx, 1);
+          persistLedger();
+          renderLedger();
+        }
+      });
+
+      //clear all
+      clearAllBtn.addEventListener('click', () => {
+        if (!ledger.length) return;
+        document.getElementById('confirmClear').classList.remove('hidden');
+
+       
+        document.getElementById('confirmClearBtn').focus();
+      });
+
+      document.getElementById('cancelClear').addEventListener('click', () => {
+        document.getElementById('confirmClear').classList.add('hidden');
+      });
+
+      document.getElementById('confirmClearBtn').addEventListener('click', () => {
+        ledger = [];
+        persistLedger();
+        renderLedger();
+        document.getElementById('confirmClear').classList.add('hidden');
+      });
+
+
+      renderLedger();
+      updateTotalUI();
+    })();
+  </script>
+
+</body>
+
+</html>
