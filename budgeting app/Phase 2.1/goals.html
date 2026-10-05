@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Savings & Spending</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: white;
+      --text: black;
+      --primary: #0000FF;
+      --danger: #E33A3A;
+      --success: #4CAF50;
+      --muted: rgba(0, 0, 0, 0.55);
+      --w: 640px;
+      --r: 10px;
+      --pad: 18px;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      font-family: 'proxima-nova', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 28px;
+      margin: 0;
+    }
+
+    .app {
+      max-width: 640px;
+      min-height: 960px;
+      background-color: #FFFFFF;
+      margin: 0 auto;
+      padding: 20px;
+      border: 2px solid black;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 34px;
+      margin: 0 0 12px;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--panel), transparent);
+      margin: 16px 0;
+    }
+
+    .scene {
+      perspective: 900px;
+      position: relative;
+    }
+
+    .card {
+      width: 100%;
+      height: 740px;
+      border-radius: var(--r);
+      transform-style: preserve-3d;
+      transition: transform .45s;
+      position: relative;
+    }
+
+    .card.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      padding: var(--pad);
+      background: var(--panel);
+      border-radius: var(--r);
+      overflow: auto;
+      backface-visibility: hidden;
+    }
+
+    .face.back {
+      transform: rotateY(180deg);
+    }
+
+    .box {
+      background-color: #0000ff;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      overflow:scroll;
+      height:550px;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #fff;
+    }
+
+    .small {
+      width: 110px;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: #fff;
+    }
+
+    .btn {
+      background-color: #FFFFFF;
+      color: #000000;
+      font-size: 14px;
+      padding: 10px 20px;
+      border: 1px solid black;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #b6b6b6;
+    }
+
+    .list {
+      margin-top: 12px;
+      padding: 0;
+      list-style: none;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    .list li {
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .list li:last-child {
+      border-bottom: 0;
+    }
+
+    .list .row-inline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .name {
+      font-weight: 700;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .del {
+      background: transparent;
+      border: 0;
+      font-size: 18px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .footer {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 18px;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .footer .btn {
+      pointer-events: auto;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: #EFF1F3;
+      border: 1px solid #223843;
+      border-radius: 6px;
+      height: 25px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      background-color: #223843;
+      height: 100%;
+      width: 0%;
+      background-image: repeating-linear-gradient(45deg,
+          rgba(255, 255, 255, 0.2) 0,
+          rgba(255, 255, 255, 0.2) 10px,
+          transparent 10px,
+          transparent 20px);
+      transition: width 280ms ease, background-color 180ms ease;
+    }
+
+    /* to make the spending progress bar go red when the user has overspent their limit  */
+    .progress-fill.over {
+      background-color: var(--danger) !important;
+    }
+
+    /* to make the savings progress bar go green when the user has reached/gone above their goal */
+    .progress-fill.goal-over {
+      background-color: var(--success) !important;
+    }
+
+    .navbar {
+    flex-shrink: 0; 
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #0000ff;
+    border-top: 2px solid #aaa;
+    border-radius: 8px;
+    padding: 10px 0;
+    margin: 0;           
+}
+
+.navbar a {
+    text-decoration: none;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+.navbar a.active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+.navbar .material-icons {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+
+    .transaction-history {
+      margin-top: 8px;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .transaction-history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding: 4px 0;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .transaction-history-header:hover {
+      color: var(--text);
+    }
+
+    .transaction-item {
+      padding: 6px 8px;
+      margin: 4px 0;
+      background: white;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .transaction-item-name {
+      font-weight: 600;
+    }
+
+    .transaction-item-amount {
+      color: var(--danger);
+    }
+
+    .transaction-item-amount.deposit {
+      color: var(--success);
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <h1>Savings & Spending</h1>
+    <div class="divider"></div>
+
+    <div class="scene">
+      <div id="card" class="card">
+
+        
+        <!-- savings html (front side) -->
+        <section class="face front">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:700;font-size:18px">Savings</div>
+            <div id="totalSavings" style="background:#fff;padding:8px 12px;border-radius:8px;font-weight:700">0.00
+            </div>
+          </div>
+
+          <!-- savings goals  -->
+          <div class="box">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:700;color:#FFFFFF">Goals</div>
+              <div class="meta" style="color:#FFFFFF">Track progress per goal</div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <input id="goalName" class="input" placeholder="Goal name (e.g., Vacation)" />
+              <input id="goalTarget" class="small" placeholder="Target" />
+              <button style="background-color: #cdcdff;" id="goalAdd" class="btn">Add</button>
+            </div>
+
+            <ul id="goalsList" class="list" aria-live="polite" style="margin-top:12px"></ul>
+          </div>
+        </section>
+
+        <!-- spending html (back side) -->
+        <section class="face back">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:700;font-size:18px">Spending</div>
+            <div id="totalSpending" style="background:#fff;padding:8px 12px;border-radius:8px;font-weight:700">0.00
+            </div>
+          </div>
+
+          <!-- budget limits -->
+          <div class="box">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="font-weight:700;color:#FFFFFF">Budgets</div>
+              <div style="color:#FFFFFF"class="meta">Record spending per budget</div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <input id="budgetName" class="input" placeholder="Budget name (e.g., Food)" />
+              <input id="budgetLimit" class="small" placeholder="Limit" />
+              <button style="background-color:#cdcdff" id="budgetAdd" class="btn">Add</button>
+            </div>
+
+            <ul id="budgetsList" class="list" aria-live="polite" style="margin-top:12px"></ul>
+          </div>
+        </section>
+      </div>
+
+      <div class="footer">
+        <button id="flipBtn" class="btn">View Spending →</button>
+      </div>
+    </div>
+
+    <nav class="navbar">
+      <a href="deadlines.html">
+        <span class="material-icons">home</span>
+        <span>Deadlines</span>
+    </a>
+      <a href="income.html" >
+        <span class="material-icons">work</span>
+        <span>Income</span>
+    </a>
+      <a href="transactions.html">
+          <span class="material-icons">payments</span>
+          <span>Transactions</span>
+      </a>
+      <a href="goals.html" class = "active">
+          <span class="material-icons">leaderboard</span>
+          <span>Goals</span>
+      </a>
+  </nav>
+  </div>
+
+  <script>
+    (function () {
+      const card = document.getElementById('card');
+      const flipBtn = document.getElementById('flipBtn');
+      const goalName = document.getElementById('goalName');
+      const goalTarget = document.getElementById('goalTarget');
+      const goalAdd = document.getElementById('goalAdd');
+      const goalsList = document.getElementById('goalsList');
+      const budgetName = document.getElementById('budgetName');
+      const budgetLimit = document.getElementById('budgetLimit');
+      const budgetAdd = document.getElementById('budgetAdd');
+      const budgetsList = document.getElementById('budgetsList');
+      const totalSavings = document.getElementById('totalSavings');
+      const totalSpending = document.getElementById('totalSpending');
+
+      let goals = JSON.parse(localStorage.getItem('goals')) || [];
+      let budgets = JSON.parse(localStorage.getItem('budgets')) || [];
+
+      const uid = () => Math.random().toString(36).slice(2, 9);
+      const fmt = n => Number(n || 0).toFixed(2);
+      const escapeHtml = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+      function updateTotals() {
+        const savingsTotal = goals.reduce((sum, g) => sum + (g.saved || 0), 0);
+        const spendingTotal = budgets.reduce((sum, b) => sum + (b.spent || 0), 0);
+        totalSavings.textContent = fmt(savingsTotal);
+        totalSpending.textContent = fmt(spendingTotal);
+      }
+
+      function saveGoals() {
+        localStorage.setItem('goals', JSON.stringify(goals));
+        updateTotals();
+      }
+
+      function saveBudgets() {
+        localStorage.setItem('budgets', JSON.stringify(budgets));
+        updateTotals();
+      }
+
+      function renderGoals() {
+        goalsList.innerHTML = '';
+        if (!goals.length) {
+          const li = document.createElement('li');
+          li.innerHTML = '<div class="row-inline"><span class="meta" style="color:var(--muted)">No goals yet</span></div>';
+          goalsList.appendChild(li);
+          return;
+        }
+
+        goals.forEach((g, idx) => {
+          const pct = g.target ? Math.round((g.saved / g.target) * 100) : 0;
+          const li = document.createElement('li');
+
+          // checking for deposits
+          const deposits = g.deposits || [];
+          let transactionHistoryHTML = '';
+          if (deposits.length > 0) {
+            const historyId = `goal-history-${idx}`;
+            transactionHistoryHTML = `
+        <div class="transaction-history">
+          <div class="transaction-history-header" onclick="document.getElementById('${historyId}').classList.toggle('hidden')">
+            <span>View Deposits (${deposits.length})</span>
+            <span>▼</span>
+          </div>
+          <div id="${historyId}" class="hidden">
+            ${deposits.map(t => `
+              <div class="transaction-item">
+                <div>
+                  <div class="transaction-item-name">${escapeHtml(t.name)}</div>
+                  <div class="meta">${t.date}</div>
+                </div>
+                <div class="transaction-item-amount deposit">+${fmt(t.amount)}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+          }
+
+          li.innerHTML = `
+      <div class="row-inline">
+        <div>
+          <div class="name">${escapeHtml(g.name)}</div>
+          <div class="meta">${fmt(g.saved)} of ${fmt(g.target)} (${pct}%)</div>
+        </div>
+        <button class="del">✕</button>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill ${pct >= 100 ? 'goal-over' : ''}" style="width:${Math.min(100, pct)}%"></div>
+      </div>
+      ${transactionHistoryHTML}
+      <div class="row">
+        <input class="input" placeholder="Record deposit" />
+        <button class="btn record">Record</button>
+      </div>
+    `;
+
+          // deleting goal 
+          li.querySelector('.del').addEventListener('click', () => {
+            goals.splice(idx, 1);
+            saveGoals();
+            renderGoals();
+          });
+
+          // for manual deposits
+          li.querySelector('.record').addEventListener('click', () => {
+            const val = Number(li.querySelector('input').value || 0);
+            if (val > 0) {
+              g.saved += val;
+              if (!g.deposits) g.deposits = [];
+              g.deposits.push({
+                name: "Manual Entry",
+                amount: val,
+                date: new Date().toISOString().split('T')[0]
+              });
+              saveGoals();
+              renderGoals();
+            }
+          });
+
+          goalsList.appendChild(li);
+        });
+        updateTotals();
+      }
+
+
+
+      function renderBudgets() {
+        budgetsList.innerHTML = '';
+        if (!budgets.length) {
+          const li = document.createElement('li');
+          li.innerHTML = '<div class="row-inline"><span class="meta" style="color:var(--muted)">No budgets yet</span></div>';
+          budgetsList.appendChild(li);
+          return;
+        }
+        budgets.forEach((b, idx) => {
+          const pct = b.limit ? Math.round((b.spent / b.limit) * 100) : 0;
+          const li = document.createElement('li');
+
+          // transaction stuff
+          let transactionHistoryHTML = '';
+          if (b.transactions && b.transactions.length > 0) {
+            const historyId = `history-${idx}`;
+            transactionHistoryHTML = `
+              <div class="transaction-history">
+                <div class="transaction-history-header" onclick="document.getElementById('${historyId}').classList.toggle('hidden')">
+                  <span>View Expenses (${b.transactions.length})</span>
+                  <span>▼</span>
+                </div>
+                <div id="${historyId}" class="hidden">
+                  ${b.transactions.map(t => `
+                    <div class="transaction-item">
+                      <div>
+                        <div class="transaction-item-name">${escapeHtml(t.name)}</div>
+                        <div class="meta">${t.date}</div>
+                      </div>
+                      <div class="transaction-item-amount">${fmt(t.amount)}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+          }
+
+          li.innerHTML = `
+            <div class="row-inline">
+              <div><div class="name">${escapeHtml(b.name)}</div>
+              <div class="meta">${fmt(b.spent)} of ${fmt(b.limit)} (${pct}%)</div></div>
+              <button class="del">✕</button>
+            </div>
+            <div class="progress-bar"><div class="progress-fill ${pct > 100 ? 'over' : ''}" style="width:${Math.min(200, pct)}%"></div></div>
+            ${transactionHistoryHTML}
+            <div class="row">
+              <input class="input" placeholder="Record expense" />
+              <button class="btn record">Record</button>
+            </div>`;
+          li.querySelector('.del').addEventListener('click', () => {
+            budgets.splice(idx, 1);
+            saveBudgets();
+            renderBudgets();
+          });
+          li.querySelector('.record').addEventListener('click', () => {
+            const val = Number(li.querySelector('input').value || 0);
+            if (val > 0) {
+              b.spent += val;
+
+              // manual etnry for transactions 
+              if (!b.transactions) b.transactions = [];
+              b.transactions.push({
+                name: "Manual Entry",
+                amount: val,
+                date: new Date().toISOString().split('T')[0],
+                category: "manual"
+              });
+              saveBudgets();
+              renderBudgets();
+            }
+          });
+          budgetsList.appendChild(li);
+        });
+        updateTotals();
+      }
+
+      goalAdd.addEventListener('click', () => {
+        const name = goalName.value.trim(), target = Number(goalTarget.value);
+        if (name && target > 0) {
+          goals.push({ id: uid(), name, target, saved: 0 });
+          goalName.value = goalTarget.value = '';
+          saveGoals();
+          renderGoals();
+        }
+      });
+
+      budgetAdd.addEventListener('click', () => {
+        const name = budgetName.value.trim(), limit = Number(budgetLimit.value);
+        if (name && limit > 0) {
+          budgets.push({ id: uid(), name, limit, spent: 0, transactions: [] });
+          budgetName.value = budgetLimit.value = '';
+          saveBudgets();
+          renderBudgets();
+        }
+      });
+
+      flipBtn.addEventListener('click', () => {
+        card.classList.toggle('is-flipped');
+        flipBtn.textContent = card.classList.contains('is-flipped') ? '← Back to Savings' : 'View Spending →';
+      });
+
+      renderGoals();
+      renderBudgets();
+      updateTotals();
+    })();
+  </script>
+</body>
+
+</html>

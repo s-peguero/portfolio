@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <title>Transaction/Categories Page</title>
+   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+   <link rel="stylesheet" href="transaction_style.css">
+   <script src="chart_min.js"></script>
+</head>
+<body>
+   <div class="device">
+    <div class="device-content">
+       <div>
+           <div class="section-title">
+               <h3>Transactions & History</h3>
+           </div>
+           <div class="section-divider"></div>
+           <div class="new-transaction collapsed" id="transaction-panel">
+               <h3 id="expand-btn">+ New Transaction </h3>
+               <form id="transaction-form">
+                <div class = "button-row">
+                <div class = "form-element">
+                   <label for="name">* Name:</label>
+                   <input type="text" id="name" name="name" placeholder="Transaction Name">
+                </div>
+                <div class="form-element">
+                    <label for="amount"> * Amount: </label>
+                    <input type="number" id="amount" name="amount" placeholder="Transaction Amount">
+                 </div>
+                 <div class="form-element">
+                    <label for="date"> * Date:</label>
+                    <input type="date" id="date" name="date">
+                 </div>
+                </div>
+      
+<div id="categoryModal" class="modal">
+    <div class="modal-content">
+        <h3>Add New Category</h3>
+        <input type="text" id="newCategoryName" placeholder="Category name">
+        
+        <div class="modal-buttons" style="margin-top: 20px;">
+            <button id="confirmCategory" class="btn">Add</button>
+            <button id="cancelCategory" class="btn">Cancel</button>
+        </div>
+    </div>
+</div>
+    <div class = "button-row">
+        <div class = "form-element">
+            <label for="categories">* Category:</label>
+            <select id="categories" name="categories"></select>
+         </div>
+            <button type="button" class="btn" id="add-category-btn">+ Add New Category</button>
+            
+            </div>
+                    <div class = "button-row">
+                   <button class="btn" id="add-btn" type="button">Add Transaction</button>
+                   <button class="btn" type="button" id="cancel-btn">Cancel Transaction</button>
+                </div>
+               </form>
+           </div>
+           <div class="section-divider"></div>
+           <button class="btn" id="toggle-chart-btn">View Spending by Category</button>
+           <div class="chart-section" id="chart-container" style="display: none;">
+               <canvas id="spending-chart"></canvas>
+           </div>
+           <div class="section-divider"></div>
+           <div class="sort-controls">
+               <label for="sort">Sort by:</label>
+               <select id="sort">
+                   <option value="none">None</option>
+                   <option value="category">Category</option>
+                   <option value="recent">Most Recent First</option>
+                   <option value="oldest">Most Recent Last</option>
+               </select>
+           </div>
+
+
+           <div class="transaction-history">
+               <h3>Transaction History</h3>
+               <ul class="transaction-list" id="transaction-list"></ul>
+           </div>
+       </div>
+
+       <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>Confirm Delete</h3>
+            <p>Are you sure you want to remove this transaction?</p>
+            <div class="modal-buttons">
+                <button id="confirmYes" class="btn">Yes</button>
+                <button id="confirmNo" class="btn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <h3>Edit Transaction</h3>
+            <form id="editForm">
+                <label for="editName">Transaction Name:</label>
+                <input type="text" id="editName" required>
+    
+                <label for="editCategory">Category:</label>
+                <select id="editCategory"></select>
+    
+                <label for="editAmount">Amount: </label>
+                <input type="number" id="editAmount" step="0.01" required>
+    
+                <label for="editDate">Date:</label>
+                <input type="date" id="editDate" required>
+    
+                <div class="modal-buttons" style="margin-top: 20px;">
+                    <button type="submit" class="btn">Save</button>
+                    <button type="button" class="btn" id="cancelEdit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+    <nav class="navbar">
+        <a href="deadlines.html">
+          <span class="material-icons">home</span>
+          <span>Deadlines</span>
+      </a>
+        <a href="income.html">
+          <span class="material-icons">work</span>
+          <span>Income</span>
+      </a>
+        <a href="transactions.html" class="active">
+            <span class="material-icons">payments</span>
+            <span>Transactions</span>
+        </a>
+        <a href="goals.html">
+            <span class="material-icons">leaderboard</span>
+            <span>Goals</span>
+        </a>
+    </nav>
+   </div>
+
+   <div id="budgetModal" class="modal">
+       <div class="modal-content">
+           <h3>Add to Budget?</h3>
+           <p>Would you like to add this transaction to a budget category? </p>
+           <p>Budgets can be viewed in the Goals tab, under Spending.</p>
+           <div class="modal-buttons">
+               <button id="modalYes" class="btn">Yes</button>
+               <button id="modalNo" class="btn">No</button>
+           </div>
+          
+           <div id="budgetSelection" class="hidden">
+               <select id="budgetSelect">
+                   <option value="">Choose a budget...</option>
+                   <option value="new">+ Create New Budget</option>
+               </select>
+              
+               <div id="newBudgetForm" class="hidden">
+                    <label for="name"> * Budget Name: </label>
+                   <input type="text" id="newBudgetName" placeholder="Budget name (e.g., Food)">
+                   <label for="limit"> * Budget Limit: </label>
+                   <input type="number" id="newBudgetLimit" placeholder="Budget limit ">
+               </div>
+              
+               <div class="modal-buttons" style="margin-top: 20px;">
+                   <button id="confirmBudget" class="btn">Confirm</button>
+                   <button id="cancelBudget" class="btn">Cancel</button>
+               </div>
+           </div>
+       </div>
+   </div>
+
+   <script>
+       let categories = JSON.parse(localStorage.getItem("categories")) || ["Food", "Entertainment", "Utilities", "Home"];
+       let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+       let budgets = JSON.parse(localStorage.getItem("budgets")) || [];
+
+       const list = document.getElementById("transaction-list");
+       const sortSelect = document.getElementById("sort");
+       const panel = document.getElementById("transaction-panel");
+       const expandBtn = document.getElementById("expand-btn");
+       const categorySelect = document.getElementById("categories");
+       const addCategoryBtn = document.getElementById("add-category-btn");
+       const chartContainer = document.getElementById("chart-container");
+       const toggleChartBtn = document.getElementById("toggle-chart-btn");
+       const cancelBtn = document.getElementById("cancel-btn");
+
+       const modal = document.getElementById("budgetModal");
+       const modalYes = document.getElementById("modalYes");
+       const modalNo = document.getElementById("modalNo");
+       const budgetSelection = document.getElementById("budgetSelection");
+       const budgetSelect = document.getElementById("budgetSelect");
+       const newBudgetForm = document.getElementById("newBudgetForm");
+       const confirmBudget = document.getElementById("confirmBudget");
+       const cancelBudget = document.getElementById("cancelBudget");
+       let spendingChart = null;
+       let pendingTransaction = null;
+       renderCategoryOptions();
+       renderTransactions();
+       expandBtn.addEventListener("click", () => {
+           panel.classList.remove("collapsed");
+           panel.classList.add("expanded");
+       });
+
+       function collapsePanel() {
+           panel.classList.remove("expanded");
+           panel.classList.add("collapsed");
+       }
+
+       cancelBtn.addEventListener("click", collapsePanel);
+       function renderCategoryOptions() {
+           categorySelect.innerHTML = '<option value="empty"></option>';
+           categories.forEach(cat => {
+               const option = document.createElement("option");
+               option.value = cat;
+               option.textContent = formatCategory(cat);
+               categorySelect.appendChild(option);
+           });
+       }
+       function renderTransactions() {
+           list.innerHTML = "";
+           let sorted = [...transactions];
+           const sortValue = sortSelect.value;
+
+           if (sortValue === "recent") {
+               sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+           } else if (sortValue === "oldest") {
+               sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+           } else if (sortValue === "category") {
+               categories.forEach(cat => {
+                   const catTransactions = sorted.filter(t => t.category === cat);
+                   if (catTransactions.length > 0) {
+                       const total = catTransactions.reduce((sum, t) => sum + t.amount, 0);
+                       const header = document.createElement("h5");
+                       header.textContent = `${formatCategory(cat)} — Total: ${total.toFixed(2)}`;
+                       list.appendChild(header);
+                       catTransactions.forEach(t => {
+                           const li = createTransactionItem(t, transactions.indexOf(t));
+                           list.appendChild(li);
+                       });
+                   }
+               });
+               return;
+           }
+
+           sorted.forEach(t => {
+               const li = createTransactionItem(t, transactions.indexOf(t));
+               list.appendChild(li);
+           });
+       }
+       function createTransactionItem(t, index) {
+           const li = document.createElement("li");
+           const nameSpan = document.createElement("span");
+           nameSpan.textContent = t.name;
+           const amountSpan = document.createElement("span");
+           amountSpan.textContent = `${t.amount.toFixed(2)}`;
+           const dateSpan = document.createElement("span");
+           const [year, month, day] = t.date.split("-");
+           dateSpan.textContent = `${month}/${day}/${year}`;
+
+           const buttonsDiv = document.createElement("div");
+           buttonsDiv.className = "transaction-buttons";
+
+           const editBtn = document.createElement("button");
+           editBtn.textContent = "Edit";
+           editBtn.onclick = () => editTransaction(index);
+
+           const deleteBtn = document.createElement("button");
+           deleteBtn.textContent = "X";
+           deleteBtn.onclick = () => removeTransaction(index);
+
+           buttonsDiv.appendChild(editBtn);
+           buttonsDiv.appendChild(deleteBtn);
+
+           li.appendChild(nameSpan);
+           li.appendChild(amountSpan);
+           li.appendChild(dateSpan);
+           li.appendChild(buttonsDiv);
+           return li;
+       }
+
+       function formatCategory(cat) {
+           return cat.charAt(0).toUpperCase() + cat.slice(1).replace("/", " ");
+       }
+
+const categoryModal = document.getElementById("categoryModal");
+const newCategoryName = document.getElementById("newCategoryName");
+const confirmCategory = document.getElementById("confirmCategory");
+const cancelCategory = document.getElementById("cancelCategory");
+
+addCategoryBtn.addEventListener("click", () => {
+    newCategoryName.value = "";
+    categoryModal.style.display = "block";
+    newCategoryName.focus();
+});
+
+confirmCategory.addEventListener("click", () => {
+    const newCat = newCategoryName.value.trim().toLowerCase();
+    categories.push(newCat);
+    saveData();
+    renderCategoryOptions();
+    categoryModal.style.display = "none";
+});
+
+cancelCategory.addEventListener("click", () => {
+    categoryModal.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+    if (e.target === categoryModal) {
+        categoryModal.style.display = "none";
+    }
+});
+
+       function editTransaction(index) {
+           const t = transactions[index];
+           const newName = prompt("Edit name:", t.name);
+           if (newName === null) return;
+           const newAmount = prompt("Edit amount:", t.amount);
+           if (newAmount === null) return;
+           const newDate = prompt("Edit date (YYYY-MM-DD):", t.date);
+           if (newDate === null) return;
+           const newCategory = prompt("Edit category name:", t.category);
+           if (newCategory === null) return;
+
+           transactions[index] = {
+               name: newName,
+               amount: parseFloat(newAmount),
+               date: newDate,
+               category: newCategory.toLowerCase()
+           };
+
+           if (!categories.includes(transactions[index].category)) {
+               categories.push(transactions[index].category);
+           }
+           saveData();
+           renderCategoryOptions();
+           renderTransactions();
+       }
+
+const confirmModal = document.getElementById("confirmModal");
+const confirmYes = document.getElementById("confirmYes");
+const confirmNo = document.getElementById("confirmNo");
+
+let transactionToDelete = null;
+
+function removeTransaction(index) {
+    transactionToDelete = index;
+    confirmModal.style.display = "block";
+}
+
+confirmYes.addEventListener("click", () => {
+    if (transactionToDelete !== null) {
+        transactions.splice(transactionToDelete, 1);
+        saveData();
+        renderTransactions();
+        transactionToDelete = null;
+        confirmModal.style.display = "none";
+    }
+});
+
+confirmNo.addEventListener("click", () => {
+    transactionToDelete = null;
+    confirmModal.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+    if (e.target === confirmModal) {
+        confirmModal.style.display = "none";
+        transactionToDelete = null;
+    }
+});
+
+const editModal = document.getElementById("editModal");
+const editForm = document.getElementById("editForm");
+const editName = document.getElementById("editName");
+const editCategory = document.getElementById("editCategory");
+const editAmount = document.getElementById("editAmount");
+const editDate = document.getElementById("editDate");
+const cancelEdit = document.getElementById("cancelEdit");
+
+let transactionToEdit = null;
+
+function editTransaction(index) {
+    transactionToEdit = index;
+    const t = transactions[index];
+
+    editName.value = t.name;
+    editAmount.value = t.amount;
+    editDate.value = t.date;
+    editCategory.innerHTML = '';
+    categories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = formatCategory(cat);
+        if (cat === t.category) option.selected = true;
+        editCategory.appendChild(option);
+    });
+
+    editModal.style.display = "block";
+}
+
+editForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (transactionToEdit !== null) {
+        transactions[transactionToEdit] = {
+            name: editName.value.trim(),
+            amount: parseFloat(editAmount.value),
+            date: editDate.value,
+            category: editCategory.value
+        };
+
+        if (!categories.includes(editCategory.value)) {
+            categories.push(editCategory.value);
+        }
+
+        saveData();
+        renderCategoryOptions();
+        renderTransactions();
+        transactionToEdit = null;
+        editModal.style.display = "none";
+    }
+});
+
+cancelEdit.addEventListener("click", () => {
+    transactionToEdit = null;
+    editModal.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+    if (e.target === editModal) {
+        transactionToEdit = null;
+        editModal.style.display = "none";
+    }
+});
+       function showBudgetModal(transaction) {
+           pendingTransaction = transaction;
+           budgetSelection.classList.add("hidden");
+           newBudgetForm.classList.add("hidden");
+           modal.style.display = "block";
+           populateBudgetSelect();
+       }
+
+       function populateBudgetSelect() {
+           budgetSelect.innerHTML = '<option value="">Choose a budget...</option>';
+           budgets.forEach((budget, index) => {
+               const option = document.createElement("option");
+               option.value = index;
+               option.textContent = `${budget.name} (${budget.spent.toFixed(2)} of ${budget.limit.toFixed(2)})`;
+               budgetSelect.appendChild(option);
+           });
+           const newOption = document.createElement("option");
+           newOption.value = "new";
+           newOption.textContent = "+ Create New Budget";
+           budgetSelect.appendChild(newOption);
+       }
+
+       modalYes.addEventListener("click", () => {
+           budgetSelection.classList.remove("hidden");
+       });
+
+       modalNo.addEventListener("click", () => {
+           modal.style.display = "none";
+           pendingTransaction = null;
+       });
+
+       budgetSelect.addEventListener("change", () => {
+           if (budgetSelect.value === "new") {
+               newBudgetForm.classList.remove("hidden");
+           } else {
+               newBudgetForm.classList.add("hidden");
+           }
+       });
+
+       confirmBudget.addEventListener("click", () => {
+           const selectedValue = budgetSelect.value;        
+           if (selectedValue === "") {
+               return;
+           }
+           if (selectedValue === "new") {
+               const name = document.getElementById("newBudgetName").value.trim();
+               const limit = parseFloat(document.getElementById("newBudgetLimit").value);            
+               if (!name || !limit || limit <= 0) {
+                   return;
+               }
+               const uid = () => Math.random().toString(36).slice(2, 9);
+               const newBudget = {
+                   id: uid(),
+                   name,
+                   limit,
+                   spent: pendingTransaction.amount,
+                   transactions: [{
+                       name: pendingTransaction.name,
+                       amount: pendingTransaction.amount,
+                       date: pendingTransaction.date,
+                       category: pendingTransaction.category
+                   }]
+               };
+               budgets.push(newBudget);
+               localStorage.setItem("budgets", JSON.stringify(budgets));
+              
+               document.getElementById("newBudgetName").value = "";
+               document.getElementById("newBudgetLimit").value = "";
+               modal.style.display = "none";
+               pendingTransaction = null;
+           } else {
+               const selectedIndex = parseInt(selectedValue);
+               budgets[selectedIndex].spent += pendingTransaction.amount;
+              
+               if (!budgets[selectedIndex].transactions) {
+                   budgets[selectedIndex].transactions = [];
+               }
+               budgets[selectedIndex].transactions.push({
+                   name: pendingTransaction.name,
+                   amount: pendingTransaction.amount,
+                   date: pendingTransaction.date,
+                   category: pendingTransaction.category
+               });
+              
+               localStorage.setItem("budgets", JSON.stringify(budgets));
+               modal.style.display = "none";
+               pendingTransaction = null;
+       
+           }
+       });
+       cancelBudget.addEventListener("click", () => {
+           modal.style.display = "none";
+           pendingTransaction = null;
+       });
+       document.getElementById("add-btn").addEventListener("click", (e) => {
+           e.stopPropagation();
+           const name = document.getElementById("name").value.trim();
+           const category = document.getElementById("categories").value;
+           const amount = parseFloat(document.getElementById("amount").value);
+           const date = document.getElementById("date").value;
+           if (!name || category === "empty" || !amount || !date) {
+               return;
+           }         
+           const transaction = { name, amount, date, category };
+           transactions.push(transaction);
+           saveData();
+           document.getElementById("transaction-form").reset();
+           collapsePanel();
+           renderTransactions();
+
+           showBudgetModal(transaction);
+       });
+       sortSelect.addEventListener("change", renderTransactions);
+
+       function saveData() {
+           localStorage.setItem("categories", JSON.stringify(categories));
+           localStorage.setItem("transactions", JSON.stringify(transactions));
+
+           const categoryTotals = {};
+           transactions.forEach(t => {
+               if (!categoryTotals[t.category]) categoryTotals[t.category] = 0;
+               categoryTotals[t.category] += t.amount;
+           });
+
+           const spendingData = Object.keys(categoryTotals).map(cat => ({
+               name: cat,
+               limit: 500,
+               spent: categoryTotals[cat]
+           }));
+
+           localStorage.setItem("spendingData", JSON.stringify(spendingData));
+       }
+
+       function updateChart() {
+           const categoryTotals = {};
+           transactions.forEach(t => {
+               if (!categoryTotals[t.category]) categoryTotals[t.category] = 0;
+               categoryTotals[t.category] += t.amount;
+           });
+           const labels = Object.keys(categoryTotals).map(formatCategory);
+           const data = Object.values(categoryTotals);
+           const ctx = document.getElementById('spending-chart').getContext('2d');
+
+           if (spendingChart) spendingChart.destroy();
+
+           spendingChart = new Chart(ctx, {
+               type: 'pie',
+               data: {
+                   labels: labels,
+                   datasets: [{
+                       data: data,
+                       backgroundColor: [
+                           '#FF5733', '#33FF57', '#3357FF', '#FF33A8', '#FFBD33',
+                           '#33FFF6', '#8D33FF', '#FF3333', '#33FFBD', '#FF8C33',
+                           '#3375FF', '#FF33F6', '#33FF8C', '#F6FF33', '#8CFF33',
+                           '#FF3380', '#338CFF', '#FFB533', '#33F6FF', '#9933FF'
+                       ],
+                       borderWidth: 1
+                   }]
+               },
+               options: {
+                   plugins: {
+                       legend: { position: 'bottom', labels: { color: '#333' } }
+                   }
+               }
+           });
+       }
+       toggleChartBtn.addEventListener("click", () => {
+           if (chartContainer.style.display === "none") {
+               chartContainer.style.display = "block";
+               updateChart();
+               toggleChartBtn.textContent = "Hide Spending by Category";
+           } else {
+               chartContainer.style.display = "none";
+               toggleChartBtn.textContent = "View Spending by Category";
+           }
+       });
+   </script>
+</body>
+</html>

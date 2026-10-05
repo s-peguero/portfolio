@@ -1,0 +1,323 @@
+body {
+    margin: 0;
+    font-family: 'proxima-nova', sans-serif;
+    background-color: #FFFFFF;
+}
+
+.device {
+    max-width: 640px;
+    height: 960px;
+    background-color: #FFFFFF;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 2px solid black;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: scroll;
+}
+
+.device-content {
+    flex: 1;            
+    overflow-y: auto;  
+    padding: 20px;    
+    box-sizing: border-box;
+}
+
+
+.navbar {
+    flex-shrink: 0; 
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #0000FF;
+    color:#FFFFFF;
+    border-top: 2px solid #aaa;
+    border-radius: 8px;
+    padding: 10px 0;
+    margin: 0;           
+}
+
+.navbar a {
+    text-decoration: none;
+    color:#FFFFFF;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.navbar a.active {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+
+.navbar .material-icons {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.section-title h3 {
+    margin: 20px 0 10px 0;
+    font-size: 30px;
+    color: #000000;
+}
+
+.section-divider { 
+    height: 1px; 
+    background: linear-gradient(to right, transparent, #0000FF, transparent);
+    width: 100%;
+    margin: 10px 0;
+}
+
+.new-transaction {
+    background-color: #0000FF;
+    border: 1px solid #000000;
+    color:#FFFFFF;
+    border-radius: 10px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.new-transaction.collapsed {
+    height: 50px;
+    color:#FFFFFF;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.new-transaction.collapsed h3 {
+    margin: 0;
+    font-size: 18px;
+    color:#FFFFFF;
+    text-decoration: underline;
+}
+
+.new-transaction h3 {
+    text-decoration: underline;
+}
+
+.new-transaction form {
+    display: none;
+    flex-direction: column;
+}
+
+.new-transaction.expanded form {
+    display: flex;
+    flex-direction: column;
+}
+#expand-btn{
+    padding-right:350px;
+    
+}
+.new-transaction .button-row {
+    display: flex;
+    gap: 6px;
+    justify-content: flex;
+    flex-wrap: wrap; 
+    align-items: right;
+}
+
+.new-transaction .button-row .btn {
+    flex: 1; 
+    padding: 6px 10px;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.form-element{
+    display: flex;
+    flex-direction: column;
+    color:#FFFFFF;
+}
+
+.sort-controls{
+    color:#000000;
+}
+
+.btn{
+    background-color: #FFFFFF;
+  
+    font-size: 14px;
+    padding: 10px 20px;
+    border: 1px solid #000000;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+  
+    font-weight: bold; 
+}
+
+.btn:hover{
+    background-color: #b6b6b6;
+}
+
+#add-category-btn {
+    flex: 0.5; 
+    padding: 6px 10px;
+    font-size: 13px; 
+    height: fit-content;
+    align-self: flex-end; 
+    color:#000000;
+    background-color:#cdcdff;
+}
+
+#add-btn, #cancel-btn{
+    background-color:#cdcdff;
+}
+
+.new-transaction label {
+    margin-top: 10px;
+    font-size: 14px;
+    color:#FFFFFF
+}
+
+.new-transaction input,
+.new-transaction select {
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #000000;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.transaction-history h3 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    color: black;
+    
+}
+.transaction-list {
+    border: 1px solid #000000;
+    color:#FFFFFF;            
+    border-radius: 6px;               
+    height: 250px;                     
+    overflow-y: auto;                  
+    overflow-x: hidden;                  
+    background-color: #0000FF;          
+    padding: 8px 10px;                 
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); 
+}
+.transaction-list h5 {
+    margin-top: 15px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    color: #FFFFFF;
+}
+
+.transaction-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    background: #cdcdff;
+    color:#000000;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border: 1px solid #000000;
+}
+
+.transaction-buttons button {
+    background: white;
+    border: 1px solid #000000;
+    border-radius: 4px;
+    padding: 4px 6px;
+    cursor: pointer;
+    margin-left: 5px;
+    font-size: 12px;
+}
+
+.transaction-buttons button:hover {
+    background-color: #b6b6b6;
+}
+
+.sort-controls {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.sort-controls select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #000000;
+}
+.chart-section {
+    max-width: 400px;  
+    margin-top:10px;
+    display: flex;
+    flex-direction: row;
+}
+#spending-chart {
+    width: 150px !important;
+    height: 150px !important; 
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+
+.modal-content {
+    background-color: #fff;
+    color:#000000;
+    margin: 15% auto;
+    padding: 30px;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 500px;
+}
+
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+
+.modal-buttons button {
+    flex: 1;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    border: 1px solid #000000;
+}
+
+
+.modal select, .modal input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: 1px solid #000000;
+}
+
+
+.hidden {
+    display: none;
+}
+
+
